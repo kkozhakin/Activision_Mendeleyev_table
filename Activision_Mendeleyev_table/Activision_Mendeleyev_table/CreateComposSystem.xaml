@@ -1,0 +1,51 @@
+﻿<Window x:Class="Activision_Mendeleyev_table.CreateComposSystem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Icon="icon.jpeg"
+        Title="Выберите соединение" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Button Name="Complete" Content="Готово" Click="Complete_Click" Width="150" Height="40" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="16" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-15"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <TextBox Name="NewComposSystem" Width="250" Height="30" RenderTransformOrigin="0.5,0.5" FontSize="20">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="0"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <Label Name="label" Height="30" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-30"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <ComboBox Name="ComposSystem" Width="250" Height="40" FontSize="20" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" SelectionChanged="Compos_SelectionChanged" >
+            <ComboBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="15"/>
+                </TransformGroup>
+            </ComboBox.RenderTransform>
+        </ComboBox>
+    </Grid>
+</Window>

@@ -1,0 +1,135 @@
+﻿<Window x:Name="MendeleevTable1" x:Class="Activision_Mendeleyev_table.MendeleevTable"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Icon="icon.jpeg"
+        Title="Таблица Менделеева" Height="720" Width="1280" ScrollViewer.CanContentScroll="False" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" MinWidth="1280" MinHeight="720" FontSize="18" Closing="Window_Closing">
+    <Grid ScrollViewer.CanContentScroll="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu x:Name="MainMenu" Grid.Row="0" Height="25" VerticalAlignment="Top">
+            <Button Name="Composition" Content="Работа с соединением" Click="Composition_Click" />
+            <Button Name="Compositions" Content="Работа с системой соединений" Click="Compositions_Click" />
+            <Separator Name="sep" Width="850" Opacity="0"/>
+            <Button Name="Help" Content="Справка" Click="Help_Click"/>
+        </Menu>
+        <DataGrid Grid.Row="1" x:Name="table" AutoGenerateColumns="False" ColumnWidth="2*" VerticalGridLinesBrush="White" 
+                  HorizontalGridLinesBrush="White" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserAddRows="False" 
+                  CanUserDeleteRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True" SelectionUnit="Cell" 
+                  SelectionMode="Single" GridLinesVisibility="None" ScrollViewer.CanContentScroll="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="" Width="1*"/>
+                <DataGridTextColumn Header="Ia" Binding="{Binding Ia}"/>
+                <DataGridTextColumn Header="IIa" Binding="{Binding IIa}"/>
+                <DataGridTextColumn Header="IIIa" Binding="{Binding IIIa}"/>
+                <DataGridTextColumn Header="IVa" Binding="{Binding IVa}"/>
+                <DataGridTextColumn Header="Va" Binding="{Binding Va}"/>
+                <DataGridTextColumn Header="VIa" Binding="{Binding VIa}"/>
+                <DataGridTextColumn Header="VIIa" Binding="{Binding VIIa}"/>
+                <DataGridTextColumn Header="" Binding="{Binding VIIIa_1}"/>
+                <DataGridTextColumn Header="VIIIa" Binding="{Binding VIIIa_2}"/>
+                <DataGridTextColumn Header="" Binding="{Binding VIIIa_3}"/>
+                <DataGridTextColumn Header="Iб" Binding="{Binding Ib}"/>
+                <DataGridTextColumn Header="IIб" Binding="{Binding IIb}"/>
+                <DataGridTextColumn Header="IIIб" Binding="{Binding IIIb}"/>
+                <DataGridTextColumn Header="IVб" Binding="{Binding IVb}"/>
+                <DataGridTextColumn Header="Vб" Binding="{Binding Vb}"/>
+                <DataGridTextColumn Header="VIб" Binding="{Binding VIb}"/>
+                <DataGridTextColumn Header="VIIб" Binding="{Binding VIIb}"/>
+                <DataGridTextColumn Header="VIIIб" Binding="{Binding VIIIb}"/>
+                <DataGridTextColumn Header="" Width="1*"/>
+            </DataGrid.Columns>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="SeparatorBrush" Value="Transparent"/>
+                    <Setter Property="Thumb.HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Thumb.VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="FrameworkElement.VerticalAlignment" Value="Stretch"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridCell_MouseDoubleClick"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="Black" />
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.RowHeaderStyle>
+                <Style TargetType="{x:Type DataGridRowHeader}">
+                    <Setter Property="Content" Value=""/>
+                    <Setter Property="Width" Value="0"/>
+                </Style>
+            </DataGrid.RowHeaderStyle>
+        </DataGrid>
+        <Label Name="M" Content="M-Металлы" Foreground="HotPink" Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-200" Y="-160"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="T" Content="T-Металлы" Foreground="CornflowerBlue"  Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-200" Y="160"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="B1" Content="B1-Металлы" Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="160" X="230"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="B2" Content="B2-Металлы" Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="160" X="477"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="R" Content="R-Лантаноиды"  Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="215" X="470"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="TR" Content="TR-Актиноиды"  Grid.Row="1" Width="200" Height="35" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="470" Y="275"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+    </Grid>
+</Window>

@@ -1,0 +1,86 @@
+﻿<Window x:Class="Activision_Mendeleyev_table.DomeOfDecay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+        mc:Ignorable="d"
+        Icon="icon.jpeg"
+        Title="Купол распада" Height="465" Width="557" WindowStartupLocation="CenterScreen" MinHeight="765" MinWidth="857" Closing="Window_Closing"  SizeChanged="Window_SizeChanged" SourceInitialized="Window_SourceInitialized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="Графическое меню">
+                <MenuItem Header="Настройка цвета">
+                    <MenuItem  Header="Теория">
+                        <xctk:ColorPicker Name="Theory" Width="50" SelectedColor="Black" ShowTabHeaders="False" />
+                    </MenuItem>
+                    <MenuItem  Header="Эксперимент">
+                        <xctk:ColorPicker Name="Experiment" Width="50" SelectedColor="Red" ShowTabHeaders="False" />
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Настройка границ">
+                    <MenuItem Header="Верхняя температура" >
+                        <TextBox Name="UpT" Text="-1" Width="50" />
+                    </MenuItem>
+                    <MenuItem Header="Нижняя температура"  >
+                        <TextBox Name="DownT" Text="-1" Width="50" />
+                    </MenuItem>
+            </MenuItem>
+                <MenuItem Header="Эксперимент точками" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked" />
+            </MenuItem>
+            <MenuItem Header="Настройка данных" Click="DataSettings_Click" />
+        </Menu>
+        <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1"/>
+        <DataGrid Name="Points" Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
+        <Button Name="Build" Grid.Column="0" Grid.Row="2" Content="Построить купол" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="35" RenderTransformOrigin="0.5,0.5" Click="Build_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="20"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Name="Approxi" Grid.Column="0" Grid.Row="2" Content="Построить функцию Hsm и аппроксимировать" HorizontalAlignment="Left" VerticalAlignment="Center" Width="285" Height="35" RenderTransformOrigin="0.5,0.5" Click="Approxi_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="190"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Name="Save" Grid.Column="0" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="35" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="10"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Name="Load" Grid.Column="1" Grid.Row="2" Content="Загрузить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Width="150" Height="35" RenderTransformOrigin="0.5,0.5" Click="Load_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-20"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+    </Grid>
+</Window>
