@@ -11,6 +11,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
     {
         static Pen pen = Pens.Black;
         static Pen penExp = Pens.Red;
+        static Pen penApp = Pens.Green;
         static List<PointF> experiment = new List<PointF>();
         static bool experimetnIsPoints = true;
 
@@ -43,6 +44,12 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             set { penExp = new Pen(value); }
         }
 
+        static public Color ApproximationColor
+        {
+            get { return penApp.Color; }
+            set { penApp = new Pen(value); }
+        }
+
         public void DrawCollapse()
         {
             Collapse collapse = new Collapse(system);
@@ -73,7 +80,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             g.DrawLines(pen, left);
         }
 
-        public void DrawDH(Pen p)
+        public void DrawDH(bool f = true)
         {
             downT = downT == -1 ? 0 : downT;
             upT = upT == -1 ? (int)(system.Hsm(0.5) * 1000) + 50 : upT;
@@ -83,7 +90,10 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 dh[(int)Math.Round(i * 20)] = new Point(30 + (int)(i * a), a - (int)(((system.Hsm(i) * 1000 - downT) / (upT - downT)) * a));
 
             dh[20] = new Point(30 + a, a);
-            g.DrawLines(p, dh);
+            if (f)
+                g.DrawLines(penApp, dh);
+            else
+                g.DrawLines(pen, dh);
         }
 
         public void DrawAxes()

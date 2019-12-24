@@ -52,7 +52,7 @@ namespace Activision_Mendeleyev_table
                     MessageBoxButton.OK, MessageBoxImage.Error);
             else
                 sys = new BinSystem(name, A, B, X);
-                //sys.setData(30, 2, 6, 1, 1);
+                sys.setData(30, 2, 6, 1, 1);
 
             DataSettings ds = new DataSettings(sys);
             ds.ShowDialog();
@@ -128,9 +128,9 @@ namespace Activision_Mendeleyev_table
                     if (sys_ap != null)
                     {
                         graph_ap = new DrawingClasses.CollapseGraph(g, sys_ap, diag.Width);
-                        graph_ap.DrawDH(Pens.Green);
+                        graph_ap.DrawDH();
                     }
-                    graph.DrawDH(Pens.Black);
+                    graph.DrawDH(false);
                 }
 
                 graph.DrawAxes();
@@ -176,8 +176,45 @@ namespace Activision_Mendeleyev_table
             f = true;
 
             setColor();
-            setTemperature();
+            setBorders();
             
+            diag.Refresh();
+        }
+
+        private void Sensitivity_Click(object sender, RoutedEventArgs e)
+        {
+            f = false;
+            sys_ap = sys.Clone();
+            Points.Visibility = Visibility.Hidden;
+            Build.Visibility = Visibility.Hidden;
+            Approxi.Visibility = Visibility.Hidden;
+            Save.Visibility = Visibility.Hidden;
+            Load.Visibility = Visibility.Hidden;
+            R.Visibility = Visibility.Visible;
+            dE.Visibility = Visibility.Visible;
+            c.Visibility = Visibility.Visible;
+            R_label.Visibility = Visibility.Visible;
+            dE_label.Visibility = Visibility.Visible;
+            c_label.Visibility = Visibility.Visible;
+            R_text.Visibility = Visibility.Visible;
+            dE_text.Visibility = Visibility.Visible;
+            c_text.Visibility = Visibility.Visible;
+            Back.Visibility = Visibility.Visible;
+            DownR.IsEnabled = true;
+            UpdE.IsEnabled = true;
+            Downc.IsEnabled = true;
+            UpR.IsEnabled = true;
+            DowndE.IsEnabled = true;
+            Upc.IsEnabled = true;
+            IsExpPoints.IsEnabled = false;
+
+            R.Value = Math.Min(sys_ap.R(0), sys_ap.R(1));
+            c.Value = sys_ap.getData()[0];
+            dE.Value = sys_ap.delEps;
+
+            setColor();
+            setBorders();          
+
             diag.Refresh();
         }
 
@@ -232,6 +269,8 @@ namespace Activision_Mendeleyev_table
             DataSettings ds = new DataSettings(sys);
             ds.ShowDialog();
             sys = ds.GetBS();
+
+            diag.Refresh();
         }
 
         private void Points_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
@@ -252,7 +291,7 @@ namespace Activision_Mendeleyev_table
             f = false;
 
             setColor();
-            setTemperature();
+            setBorders();
 
             if (sys != null)
                 Approximate(new double[] { Math.Min(sys.R(1), sys.R(0)), sys.delEps, sys.getData()[0] });
@@ -260,17 +299,47 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
-        private void setTemperature()
+        private void setBorders()
         {
             int t = -1;
             if (!int.TryParse(DownT.Text, out t))
-                MessageBox.Show("Неправильно установленно верхнее граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неправильно установленно нижняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             DrawingClasses.CollapseGraph.DownTemp = t;
 
             t = -1;
             if (!int.TryParse(UpT.Text, out t))
-                MessageBox.Show("Неправильно установленно нижняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неправильно установленно верхняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             DrawingClasses.CollapseGraph.UpTemp = t;
+
+            double b = 0.01;
+            if (!double.TryParse(UpR.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            R.Maximum = b;
+
+            b = 0.01;
+            if (!double.TryParse(DownR.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно нижняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            R.Minimum = b;
+
+            b = 0.01;
+            if (!double.TryParse(Upc.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно верхняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            c.Maximum = b;
+
+            b = 0.01;
+            if (!double.TryParse(Downc.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно нижняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            c.Minimum = b;
+
+            b = 0.01;
+            if (!double.TryParse(UpdE.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно верхняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            dE.Maximum = b;
+
+            b = 0.01;
+            if (!double.TryParse(DowndE.Text.Replace('.', ','), out b) && b <= 0)
+                MessageBox.Show("Неправильно установленно нижняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            dE.Minimum = b;
         }
 
         private void setColor()
@@ -280,6 +349,73 @@ namespace Activision_Mendeleyev_table
 
             DrawingClasses.CollapseGraph.Color = Color.FromArgb(Theory.SelectedColor.Value.A,
                 Theory.SelectedColor.Value.B, Theory.SelectedColor.Value.G, Theory.SelectedColor.Value.B);
+
+            DrawingClasses.CollapseGraph.ApproximationColor = Color.FromArgb(Approximation.SelectedColor.Value.A,
+                Approximation.SelectedColor.Value.B, Approximation.SelectedColor.Value.G, Approximation.SelectedColor.Value.B);
+        }
+
+        private void c_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double[] dat = sys_ap.getData();
+            sys_ap.setData(c.Value, dat[1], dat[2], dat[3], dat[4]);
+
+            setColor();
+            setBorders();
+
+            diag.Refresh();
+        }
+
+        private void dE_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            sys_ap.delEps = dE.Value; 
+
+            setColor();
+            setBorders();
+
+            diag.Refresh();
+        }
+
+        private void R_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            sys_ap.R_const = R.Value;
+
+            setColor();
+            setBorders();
+
+            diag.Refresh();
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            f = true;
+            sys_ap = null;
+            Points.Visibility = Visibility.Visible;
+            Build.Visibility = Visibility.Visible;
+            Approxi.Visibility = Visibility.Visible;
+            Save.Visibility = Visibility.Visible;
+            Load.Visibility = Visibility.Visible;
+            R.Visibility = Visibility.Hidden;
+            dE.Visibility = Visibility.Hidden;
+            c.Visibility = Visibility.Hidden;
+            R_label.Visibility = Visibility.Hidden;
+            dE_label.Visibility = Visibility.Hidden;
+            c_label.Visibility = Visibility.Hidden;
+            R_text.Visibility = Visibility.Hidden;
+            dE_text.Visibility = Visibility.Hidden;
+            c_text.Visibility = Visibility.Hidden;
+            Back.Visibility = Visibility.Hidden;
+            DownR.IsEnabled = false;
+            UpdE.IsEnabled = false;
+            Downc.IsEnabled = false;
+            UpR.IsEnabled = false;
+            DowndE.IsEnabled = false;
+            Upc.IsEnabled = false;
+            IsExpPoints.IsEnabled = true;
+
+            setColor();
+            setBorders();
+
+            diag.Refresh();
         }
 
         private void MenuItem_Unchecked(object sender, RoutedEventArgs e)

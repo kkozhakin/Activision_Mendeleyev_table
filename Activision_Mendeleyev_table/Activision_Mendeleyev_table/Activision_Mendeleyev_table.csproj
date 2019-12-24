@@ -116,6 +116,7 @@
       <DependentUpon>ElemContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\Point.cs" />
+    <Compile Include="HelperClasses\RoundConverter.cs" />
     <Compile Include="HelperClasses\Strings.cs" />
     <Compile Include="Settings.cs" />
     <Page Include="ComposSystemContent.xaml">

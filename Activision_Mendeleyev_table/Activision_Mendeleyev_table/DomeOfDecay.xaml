@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+        xmlns:local="clr-namespace:Activision_Mendeleyev_table.HelperClasses"
         mc:Ignorable="d"
         Icon="icon.jpeg"
         Title="Купол распада" Height="465" Width="557" WindowStartupLocation="CenterScreen" MinHeight="765" MinWidth="857" Closing="Window_Closing"  SizeChanged="Window_SizeChanged" SourceInitialized="Window_SourceInitialized">
+    <Window.Resources>
+        <local:RoundConverter x:Key="RoundConverter"></local:RoundConverter>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -15,10 +19,11 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="21*" />
+            <ColumnDefinition Width="628*"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="Графическое меню">
                 <MenuItem Header="Настройка цвета">
                     <MenuItem  Header="Теория">
@@ -26,6 +31,9 @@
                     </MenuItem>
                     <MenuItem  Header="Эксперимент">
                         <xctk:ColorPicker Name="Experiment" Width="50" SelectedColor="Red" ShowTabHeaders="False" />
+                    </MenuItem>
+                    <MenuItem  Header="Аппроксимация/чувствительность">
+                        <xctk:ColorPicker Name="Approximation" Width="50" SelectedColor="Green" ShowTabHeaders="False" />
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Настройка границ">
@@ -35,14 +43,114 @@
                     <MenuItem Header="Нижняя температура"  >
                         <TextBox Name="DownT" Text="-1" Width="50" />
                     </MenuItem>
-            </MenuItem>
-                <MenuItem Header="Эксперимент точками" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked" />
+                    <MenuItem Header="Верхняя граница параметра Rmin" >
+                        <TextBox Name="UpR" Text="10" Width="50" IsEnabled="False"/>
+                    </MenuItem>
+                    <MenuItem Header="Нижняя граница параметра Rmin"  >
+                        <TextBox Name="DownR" Text="0.01" Width="50" IsEnabled="False" />
+                    </MenuItem>
+                    <MenuItem Header="Верхняя граница параметра delEps" >
+                        <TextBox Name="UpdE" Text="1" Width="50" IsEnabled="False" />
+                    </MenuItem>
+                    <MenuItem Header="Нижняя граница параметра delEps"  >
+                        <TextBox Name="DowndE" Text="0.01" Width="50" IsEnabled="False" />
+                    </MenuItem>
+                    <MenuItem Header="Верхняя граница параметра c" >
+                        <TextBox Name="Upc" Text="100" Width="50" IsEnabled="False" />
+                    </MenuItem>
+                    <MenuItem Header="Нижняя граница параметра c"  >
+                        <TextBox Name="Downc" Text="0.01" Width="50" IsEnabled="False" />
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Name="IsExpPoints" Header="Эксперимент точками" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked" />
             </MenuItem>
             <MenuItem Header="Настройка данных" Click="DataSettings_Click" />
+            <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
         </Menu>
-        <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1"/>
-        <DataGrid Name="Points" Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
-        <Button Name="Build" Grid.Column="0" Grid.Row="2" Content="Построить купол" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="35" RenderTransformOrigin="0.5,0.5" Click="Build_Click">
+        <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <DataGrid Name="Points" Grid.Column="2" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
+        <Label Name="dE_label"  Content="delEps" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Margin="78,0" />
+        <Label Name="R_label" Content="R" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="30"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="c_label" Content="c" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-20"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <TextBox Name="dE_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=dE, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Height="20" Width="50" IsReadOnly="True" RenderTransformOrigin="0.5,0.5">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="35"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <TextBox Name="R_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=R, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5" IsReadOnly="True">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="20" Y="35"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <TextBox Name="c_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=c, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5" IsReadOnly="True">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-20" Y="35"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <Slider Name="R" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="R_ValueChanged" >
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="20" Y="70"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Slider Name="dE" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="dE_ValueChanged">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="70"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Slider Name="c" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="c_ValueChanged">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-20" Y="70"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Button Name="Build" Grid.Column="0" Grid.Row="2" Content="Построить купол" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="34" RenderTransformOrigin="0.5,0.5" Click="Build_Click" Grid.ColumnSpan="2" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -52,7 +160,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button Name="Approxi" Grid.Column="0" Grid.Row="2" Content="Построить функцию Hsm и аппроксимировать" HorizontalAlignment="Left" VerticalAlignment="Center" Width="285" Height="35" RenderTransformOrigin="0.5,0.5" Click="Approxi_Click">
+        <Button Name="Approxi" Grid.Column="0" Grid.Row="2" Content="Построить функцию Hsm и аппроксимировать" HorizontalAlignment="Left" VerticalAlignment="Center" Width="285" Height="34" RenderTransformOrigin="0.5,0.5" Click="Approxi_Click" Grid.ColumnSpan="2" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -62,7 +170,8 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button Name="Save" Grid.Column="0" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="35" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5">
+        <Button Name="Back" Grid.Column="0" Grid.Row="2" Content="Назад" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="34" Click="Back_Click" Grid.ColumnSpan="2" Visibility="Hidden" />
+        <Button Name="Save" Grid.Column="1" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -72,7 +181,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button Name="Load" Grid.Column="1" Grid.Row="2" Content="Загрузить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Width="150" Height="35" RenderTransformOrigin="0.5,0.5" Click="Load_Click">
+        <Button Name="Load" Grid.Column="2" Grid.Row="2" Content="Загрузить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Width="150" Height="34" RenderTransformOrigin="0.5,0.5" Click="Load_Click" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
