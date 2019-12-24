@@ -311,47 +311,53 @@ namespace Activision_Mendeleyev_table
                 MessageBox.Show("Неправильно установленно верхняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             DrawingClasses.CollapseGraph.UpTemp = t;
 
-            double b = 0.01;
-            if (!double.TryParse(UpR.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            R.Maximum = b;
+            if (!f && sys_ap != null)
+            {
+                double b = 0.01;
+                if (!double.TryParse(UpR.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                R.Maximum = b;
 
-            b = 0.01;
-            if (!double.TryParse(DownR.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно нижняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            R.Minimum = b;
+                b = 0.01;
+                if (!double.TryParse(DownR.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно нижняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                R.Minimum = b;
 
-            b = 0.01;
-            if (!double.TryParse(Upc.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно верхняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            c.Maximum = b;
+                b = 0.01;
+                if (!double.TryParse(Upc.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно верхняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                c.Maximum = b;
 
-            b = 0.01;
-            if (!double.TryParse(Downc.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно нижняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            c.Minimum = b;
+                b = 0.01;
+                if (!double.TryParse(Downc.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно нижняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                c.Minimum = b;
 
-            b = 0.01;
-            if (!double.TryParse(UpdE.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно верхняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            dE.Maximum = b;
+                b = 0.01;
+                if (!double.TryParse(UpdE.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно верхняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                dE.Maximum = b;
 
-            b = 0.01;
-            if (!double.TryParse(DowndE.Text.Replace('.', ','), out b) && b <= 0)
-                MessageBox.Show("Неправильно установленно нижняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            dE.Minimum = b;
+                b = 0.01;
+                if (!double.TryParse(DowndE.Text.Replace('.', ','), out b) && b <= 0)
+                    MessageBox.Show("Неправильно установленно нижняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                dE.Minimum = b;
+            }
         }
 
         private void setColor()
         {
-            DrawingClasses.CollapseGraph.ExperimentColor = Color.FromArgb(Experiment.SelectedColor.Value.A, Experiment.SelectedColor.Value.B,
-                Experiment.SelectedColor.Value.G, Experiment.SelectedColor.Value.B);
+            byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(Experiment.SelectedColor.Value.B * (Math.Pow(256, 0)) +
+                Experiment.SelectedColor.Value.G * (Math.Pow(256, 1)) + Experiment.SelectedColor.Value.R * (Math.Pow(256, 2))));
+            DrawingClasses.CollapseGraph.ExperimentColor = Color.FromArgb(255, bytes[2], bytes[1], bytes[0]);
 
-            DrawingClasses.CollapseGraph.Color = Color.FromArgb(Theory.SelectedColor.Value.A,
-                Theory.SelectedColor.Value.B, Theory.SelectedColor.Value.G, Theory.SelectedColor.Value.B);
+            bytes = BitConverter.GetBytes(Convert.ToInt64(Theory.SelectedColor.Value.B * (Math.Pow(256, 0)) +
+                Theory.SelectedColor.Value.G * (Math.Pow(256, 1)) + Theory.SelectedColor.Value.R * (Math.Pow(256, 2))));
+            DrawingClasses.CollapseGraph.Color = Color.FromArgb(255, bytes[2], bytes[1], bytes[0]);
 
-            DrawingClasses.CollapseGraph.ApproximationColor = Color.FromArgb(Approximation.SelectedColor.Value.A,
-                Approximation.SelectedColor.Value.B, Approximation.SelectedColor.Value.G, Approximation.SelectedColor.Value.B);
+            bytes = BitConverter.GetBytes(Convert.ToInt64(Approximation.SelectedColor.Value.B * (Math.Pow(256, 0)) + 
+                Approximation.SelectedColor.Value.G * (Math.Pow(256, 1)) + Approximation.SelectedColor.Value.R * (Math.Pow(256, 2))));
+            DrawingClasses.CollapseGraph.ApproximationColor = Color.FromArgb(255, bytes[2], bytes[1], bytes[0]);
         }
 
         private void c_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

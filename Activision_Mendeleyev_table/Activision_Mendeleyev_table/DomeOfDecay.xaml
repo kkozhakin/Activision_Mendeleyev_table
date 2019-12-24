@@ -120,7 +120,7 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <Slider Name="R" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="R_ValueChanged" >
+        <Slider Name="R" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="R_ValueChanged">
             <Slider.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
