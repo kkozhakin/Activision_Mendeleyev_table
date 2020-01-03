@@ -43,7 +43,6 @@ namespace Activision_Mendeleyev_table
             InitializeComponent();
 
             string[] elems = Parse(name);
-
             Composition A = MendeleevTable.Elems.Find(x => x.Name == elems[0]);
             Composition B = MendeleevTable.Elems.Find(x => x.Name == elems[1]);
             Composition X = MendeleevTable.Elems.Find(x => x.Name == elems[2]);
@@ -451,7 +450,7 @@ namespace Activision_Mendeleyev_table
             }
             catch (ArgumentNullException)
             {
-                MessageBox.Show("Точки не заданы! Аппроксимация невозможна!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Точки не заданы! Аппроксимация невозможна!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

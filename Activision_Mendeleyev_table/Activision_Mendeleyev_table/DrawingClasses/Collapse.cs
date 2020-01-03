@@ -15,7 +15,10 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             string r1 = GetRatio(system.delR / system.r1);
             string r2 = GetRatio(system.delR / system.r2);
 
-            XDocument doc = XDocument.Load("Collapse.xml");
+            System.Windows.Resources.StreamResourceInfo ri = System.Windows.Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
+            System.IO.Stream data = ri.Stream;
+
+            XDocument doc = XDocument.Load(data);
             string[] x1values = doc.Root.Elements().First(
                 p => p.Attribute("ratio").Value == r1).Element("x1").Value.Split(';');
             string[] x2values = doc.Root.Elements().First(
