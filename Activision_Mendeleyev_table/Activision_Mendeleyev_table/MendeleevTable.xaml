@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Icon="icon.jpeg"
-        Title="Таблица Менделеева" Height="720" Width="1280" WindowStartupLocation="CenterScreen" ScrollViewer.CanContentScroll="False" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" MinWidth="1280" MinHeight="720" FontSize="18" Closing="Window_Closing">
+        Title="Таблица Менделеева" Height="720" Width="1280" WindowStartupLocation="CenterScreen" ScrollViewer.CanContentScroll="False" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" MinWidth="1280" MinHeight="720" FontSize="18">
     <Grid ScrollViewer.CanContentScroll="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />

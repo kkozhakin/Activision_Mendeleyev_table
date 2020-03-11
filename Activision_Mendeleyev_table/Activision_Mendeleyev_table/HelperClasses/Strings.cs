@@ -152,7 +152,7 @@
         }
 
         /// <summary>
-        /// Преобразует некоторые символы строки в над(под)строчные по заданным правилам
+        /// Преобразует числовые символы после буквенных и подстрочных символов в подстрочные
         /// </summary>
         /// <param name="str">исходная строка</param>
         /// <returns>преобразованная строка</returns>
@@ -162,52 +162,14 @@
             string str1 = "";
             while (i < str.Length)
             {
-                // Преобразует символы после комбинации _{ и до } в подстрочные
-               if (i < str.Length && str[i] == '_')
-                {
-                    i++;
-                    if (str[i] != '{')
-                        str1 += Substring(str[i]);
-                    else
-                    {
-                        i++;
-                        while (i < str.Length && str[i] != '}')
-                        {
-                            str1 += Substring(str[i]);
-                            i++;
-                        }
-                    }
-                    i++;
-                }
-                // Преобразует символы после комбинации ^{ и до } в надстрочные
-                if (i < str.Length && str[i] == '^')
-                {
-                    i++;
-                    if (str[i] != '{')
-                        str1 += Superstring(str[i]);
-                    else
-                    {
-                        i++;
-                        while (i < str.Length && str[i] != '}')
-                        {
-                            str1 += Superstring(str[i]);
-                            i++;
-                        }
-                    }
-                    i++;
-                }
-                if (i < str.Length && str[i] != '_')
-                {
-                    // Преобразует символы после буквенных и подстрочных символов в подстрочные
-                    if (i > 0 && "0123456789+-".Contains(str[i].ToString()) && "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎)QWERTYUIOPASDFGHJKLZXCVVBNMqwertyuiopasdfghjklzxcvbnm".Contains(str1[i - 1].ToString()))                       
-                        str1 += Substring(str[i]);
-                    else
-                        if (i > 1 && '.' == str[i - 1] && "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎()QWERTYUIOPASDFGHJKLZXCVVBNMqwertyuiopasdfghjklzxcvbnm".Contains(str1[i - 2].ToString()))
-                        str1 += Substring(str[i]);
-                    else
-                        str1 += str[i];
-                    i++;
-                }
+                if (i > 0 && "0123456789".Contains(str[i].ToString()) && "₀₁₂₃₄₅₆₇₈₉)QWERTYUIOPASDFGHJKLZXCVVBNMqwertyuiopasdfghjklzxcvbnm".Contains(str1[i - 1].ToString()))
+                    str1 += Substring(str[i]);
+                else
+                    if (i > 1 && '.' == str[i - 1] && "₀₁₂₃₄₅₆₇₈₉)QWERTYUIOPASDFGHJKLZXCVVBNMqwertyuiopasdfghjklzxcvbnm".Contains(str1[i - 2].ToString()))
+                    str1 += Substring(str[i]);
+                else
+                    str1 += str[i];
+                i++;
             }
             return str1;
         }

@@ -187,7 +187,7 @@ namespace Activision_Mendeleyev_table
             }
             catch (Exception ex)
             {
-                if (ex.Message.Split(' ')[0] == "Отсутствует")
+                if (ex.InnerException.Message == "MyException")
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
                     MessageBox.Show("Неверный формат формулы!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -241,7 +241,7 @@ namespace Activision_Mendeleyev_table
                     if (form.symbol != "" && form.symbol != " ")
                         foreach (DataColumn v in dat.Columns)
                             if (v.Caption == form.symbol)
-                                throw new DuplicateNameException();
+                                throw new DuplicateNameException("Такая формула уже принадлежит данной таблице!", new Exception("MyException"));
 
                     DataColumn col = new DataColumn('=' + form.formula) { Caption = form.symbol };
                     dat.Columns.Add(col);
@@ -255,16 +255,12 @@ namespace Activision_Mendeleyev_table
                         dat.Rows[u][dat.Columns.Count - 1] = MathParser.Parse(dat.Columns[dat.Columns.Count - 1].ColumnName.Substring(1), ref dat, u);
                 }                          
             }
-            catch (DuplicateNameException)
-            {
-                MessageBox.Show("Такая формула уже принадлежит данной таблице!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
             catch (Exception ex)
             {
-                if (ex.Message.Split(' ')[0] == "Отсутствует")
+                if (ex.InnerException != null && ex.InnerException.Message == "MyException")
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
-                    MessageBox.Show("Неверный формат формулы!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неверный формат формулы или она уже содержится в данной таблице!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             if (f && dat.Columns.Count > 0 || !f && dat.Columns.Count > 1)
                 DelColumn.IsEnabled = true;

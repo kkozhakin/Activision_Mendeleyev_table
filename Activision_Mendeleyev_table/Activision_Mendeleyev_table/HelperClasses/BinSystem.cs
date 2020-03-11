@@ -5,18 +5,20 @@ namespace Activision_Mendeleyev_table.HelperClasses
     public class BinSystem
     {
         //array of table symbols
-        public string[] symbols = new string[2] { "R(i)", "х" };
+        public string[] symbols = new string[3] { "R(i)", "х", "ФЗ" };
         const double kN = 1.9844 * 0.001;
-        double _constA;  
-        bool _useConstA = false;
+        public double A = -1; 
         double c = -1;
         double m = -1;
         double n = -1;
         double z = -1;
-        double zX = -1;
+        public double zX = -1;
         double r_1 = -1;
         double r_2 = -1;
         double r_3 = -1;
+        public int numA = 0;
+        public int numB = 0;
+        public int numX = 0;
         public double R_const = -1;
         double deleps = -1;
 
@@ -31,7 +33,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
             get
             {
                 if (r_1 == -1)
-                    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_1);
+                    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
  
                 return r_1;
             }
@@ -47,7 +49,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
             get
             {
                 if (r_2 == -1)
-                    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_2);
+                    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
 
                 return r_2;
             }
@@ -63,7 +65,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
             get
             {
                 if (r_3 == -1)
-                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_3);
+                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
 
                 return r_3;
             }
@@ -79,9 +81,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
             get
             {
                 if (r_1 == -1)
-                    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_1);
+                    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
                 if (r_3 == -1)
-                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_3);
+                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
 
                 if (r_3 != -1 && r_1 != -1)
                     return r_1 + r_3;
@@ -95,9 +97,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
             get
             {
                 if (r_2 == -1)
-                    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_2);
+                    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
                 if (r_3 == -1)
-                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_3);
+                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
 
                 if (r_3 != -1 && r_2 != -1)
                     return r_2 + r_3;
@@ -129,16 +131,15 @@ namespace Activision_Mendeleyev_table.HelperClasses
             elemX = X;
         }
 
-        public void setData(double c, double m, double n, double z, double zX)
+        public void setData(double c, double m, double n, double z)
         {
             this.c = c;
             this.m = m;
             this.n = n;
             this.z = z;
-            this.zX = zX;
         }
 
-        public double[] getData() { return new double[] { c, m, n, z, zX }; }
+        public double[] getData() { return new double[] { c, m, n, z, numA, numB, numX }; }
 
         public double Ssm(double x1)
         {
@@ -155,29 +156,16 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 return R_const;
 
             if (r_2 == -1)
-                double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_2);
+                double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
             if (r_3 == -1)
-                double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_3);
+                double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
             if (r_1 == -1)
-                double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[0], out r_1);
+                double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
 
             if (r_1 != -1 && r_2 != -1 && r_3 != -1)
                 return x1 * r_1 + (1 - x1) * r_2 + r_3;
             else
                 return -1;
-        }
-
-        public double A
-        {
-            get
-            {
-                if (_useConstA)
-                    return _constA;
-
-                double alf = ((-1 + Math.Sqrt(1 + (4 * 1.81) / (n * n))) * (n * n)) / 2;
-
-                return (alf * m * z * zX) / 2;
-            }
         }
 
         public double delR
@@ -195,16 +183,24 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
 
             Composition temp;
+            int num;
 
             switch (i)
             {
-                case 1: temp = elemA; break;
-                case 2: temp = elemB; break;
-                default: return 0;
+                case 1:
+                    temp = elemA;
+                    num = numA;
+                    break;
+                case 2:
+                    temp = elemB;
+                    num = numB;
+                    break;
+                default:
+                    return 0;
             }
       
-            if (double.TryParse(temp.Properties.Find(x => x.First.Second == symbols[1]).Second[0], out double k)
-                && double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[1]).Second[0], out double j))
+            if (double.TryParse(temp.Properties.Find(x => x.First.Second == symbols[1]).Second[num], out double k)
+                && double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[1]).Second[numX], out double j))
                 return 1 - (z / n) * Math.Exp((k - j) * (k - j) * -0.25);
             else
                 return -1;
@@ -230,7 +226,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             double x2 = 1 - x1;
 
-            double first = x1 * x2 * ((322 * A) / R(x1)) * (delEps * delEps);
+            double first = x1 * x2 * (322 * A / R(x1)) * (delEps * delEps);
+
+            if (zX == -1)
+                double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[2]).Second[numX], out zX);
+
             double second = x1 * x2 * (c * m * n * z * zX *
                 ((delR / R(x1)) * (delR / R(x1))));
 
@@ -244,18 +244,13 @@ namespace Activision_Mendeleyev_table.HelperClasses
 
         public double Tmax
         {
-            get { return (c * m * n * z * zX * ((delR / R1) * (delR / R1))) / (2 * kN); }
-        }
+            get
+            {
+                if (zX == -1)
+                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[2]).Second[numX], out zX);
 
-        public void setA(bool flag, double value)
-        {
-            _useConstA = flag;
-            _constA = value;
-        }
-
-        public bool useA
-        {
-            get { return _useConstA; }
+                return (c * m * n * z * zX * ((delR / Math.Min(R1, R2)) * (delR / Math.Min(R1, R2)))) / (2 * kN);
+            }
         }
 
         public override string ToString()
@@ -267,7 +262,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             BinSystem toClone = new BinSystem(sourceString, new Composition(elemA.Name, elemA.DataTable, elemA.Properties), new Composition(elemB.Name, elemB.DataTable, elemB.Properties),
                 new Composition(elemX.Name, elemX.DataTable, elemX.Properties));
-            toClone.setData(c, m, n, z, zX);
+            toClone.setData(c, m, n, z);
+            toClone.numA = numA;
+            toClone.numB = numB;
+            toClone.numX = numX;
+            toClone.A = A;
 
             return toClone;
         }

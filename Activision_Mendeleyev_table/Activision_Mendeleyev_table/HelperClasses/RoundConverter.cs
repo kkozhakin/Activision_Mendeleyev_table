@@ -16,7 +16,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("", new Exception("MyException"));
         }
     }
 }

@@ -51,7 +51,6 @@ namespace Activision_Mendeleyev_table
                     MessageBoxButton.OK, MessageBoxImage.Error);
             else
                 sys = new BinSystem(name, A, B, X);
-                sys.setData(30, 2, 6, 1, 1);
 
             DataSettings ds = new DataSettings(sys);
             ds.ShowDialog();
@@ -79,7 +78,7 @@ namespace Activision_Mendeleyev_table
 
             s = s.Replace(" ", "");
 
-            if (new Regex(@"[A-Z]{1}[a-z]?\d*[A-Z]{1}[a-z]?\d*[_-₋]{1}[A-Z]{1}[a-z]?\d*[A-Z]{1}[a-z]?\d*").IsMatch(s))
+            if (new Regex(@"[A-Z]{1}[a-z]?[₀₁₂₃₄₅₆₇₈₉]*[A-Z]{1}[a-z]?[₀₁₂₃₄₅₆₇₈₉]*[-]{1}[A-Z]{1}[a-z]?[₀₁₂₃₄₅₆₇₈₉]*[A-Z]{1}[a-z]?[₀₁₂₃₄₅₆₇₈₉]*").IsMatch(s))
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -115,6 +114,7 @@ namespace Activision_Mendeleyev_table
         {
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            MessageBox.Show(sys.Tmax.ToString());
 
             try
             {
@@ -126,6 +126,7 @@ namespace Activision_Mendeleyev_table
                 {
                     if (sys_ap != null)
                     {
+                        MessageBox.Show(sys_ap.Tmax.ToString());
                         graph_ap = new DrawingClasses.CollapseGraph(g, sys_ap, diag.Width);
                         graph_ap.DrawDH();
                     }
@@ -135,12 +136,12 @@ namespace Activision_Mendeleyev_table
                 graph.DrawAxes();
                 graph.DrawExperiment();
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Неверные данные для построения купола! Измените их в таблицах или в меню настроек!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                DataSettings ds = new DataSettings(sys);
-                ds.ShowDialog();
-                sys = ds.GetBS();
+                if (ex.InnerException != null && ex.InnerException.Message == "MyException")
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                    MessageBox.Show("Неверные данные для построения купола! Измените их в таблицах или в меню настроек!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -238,7 +239,8 @@ namespace Activision_Mendeleyev_table
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Text files (.txt)|*.txt"
+                Filter = "Text files (.txt)|*.txt",
+                CheckFileExists = true
             };
 
             try
@@ -362,7 +364,7 @@ namespace Activision_Mendeleyev_table
         private void c_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             double[] dat = sys_ap.getData();
-            sys_ap.setData(c.Value, dat[1], dat[2], dat[3], dat[4]);
+            sys_ap.setData(c.Value, dat[1], dat[2], dat[3]);
 
             setColor();
             setBorders();
@@ -436,17 +438,17 @@ namespace Activision_Mendeleyev_table
             double[] data = sys.getData();
 
             Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
-            => 1000 * x * (1 - x) * ((332 * sys.A / PP[0] * PP[1] * PP[1] + PP[2] * data[1] * data[2] * data[3] * data[4] *
+            => 1000 * x * (1 - x) * ((332 * sys.A / PP[0] * PP[1] * PP[1] + PP[2] * data[1] * data[2] * data[3] * sys.zX *
             (Math.Abs(sys.r1 - sys.r2) / PP[0] * Math.Abs(sys.r1 - sys.r2) / PP[0]))));
 
             try
             {
-                double[] par_ap = Library.AproxiTab(Dots, Function, par, Criterion.Criterion_CKO);
+                double[] par_ap = Library.AproxiTab(Dots, Function, par, Criterion.Criterion_CKO); //TODO min of max and sko
                 MessageBox.Show(String.Format("R_min = {0:f4}; delta E = {1:f4}; c = {2:f4}", par_ap[0], par_ap[1], par_ap[2]));
                 sys_ap = sys.Clone();
                 sys_ap.R_const = par_ap[0];
                 sys_ap.delEps = par_ap[1];
-                sys_ap.setData(par_ap[2], data[1], data[2], data[3], data[4]);
+                sys_ap.setData(par_ap[2], data[1], data[2], data[3]);
             }
             catch (ArgumentNullException)
             {

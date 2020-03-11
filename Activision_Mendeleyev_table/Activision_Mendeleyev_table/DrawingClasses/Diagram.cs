@@ -31,7 +31,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
             if (x1 == -1)
             {
-                throw new Exception("Энергия одного знака!");
+                throw new Exception("Энергия одного знака!", new Exception("MyException"));
             }
 
             int x, y;
@@ -87,16 +87,13 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 g.DrawLines(Pens.Black, diagram.ToArray());
         }
 
-        public void DrawAxes()
+        /*public void DrawAxes()
         {
             g.DrawString(string.Format("{0:f0}", (int)(system.Tmax)), new Font("X", 8), Brushes.Black, new Point(0, 0));
             g.DrawString(string.Format("{0:f0}", (int)(system.Tmax * 0.2)), new Font("X", 8), Brushes.Black, new Point(0, a));
 
-            string left = system.ToString().Split('-')[0];
-            string right = system.ToString().Split('-')[1];
-
-            g.DrawString(left, new Font("X", 14), Brushes.Black, new Point(30, a + 20));
-            g.DrawString(right, new Font("X", 14), Brushes.Black, new Point(a - 30, a + 20));
+            g.DrawString(system.ToString().Split('-')[0], new Font("X", 14), Brushes.Black, new Point(30, a + 20));
+            g.DrawString(system.ToString().Split('-')[1], new Font("X", 14), Brushes.Black, new Point(a - 30, a + 20));
 
             g.DrawLine(Pens.Black, 30, 0, 30, a + 30);
             g.DrawLine(Pens.Black, 0, a, a + 30, a);
@@ -109,6 +106,6 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 g.DrawLine(Pens.Black, 30 + (int)(a * x), a - 5, 30 + (int)(a * x), a + 5);
                 g.DrawLine(Pens.Black, 30 + (int)(a * (1 - x)), a - 5, 30 + (int)(a * (1 - x)), a + 5);
             }
-        }
+        }*/
     }
 }

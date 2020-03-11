@@ -12,55 +12,54 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
         public Collapse(BinSystem system)
         {
-            string r1 = GetRatio(system.delR / system.r1);
-            string r2 = GetRatio(system.delR / system.r2);
+            string r = GetRatio(system.delR / Math.Min(system.R1, system.R2));
 
+            /*if (filename == "")
+            {
+                Microsoft.Win32.OpenFileDialog myDialog = new Microsoft.Win32.OpenFileDialog()
+                {
+                    Filter = "XML-файл(*.XML)|*.XML",
+                    CheckFileExists = true
+                };
+
+                if (myDialog.ShowDialog() == true)
+                    filename = myDialog.FileName;
+                else throw new Exception("Файл с точками купола не выбран! Построение невозможно!", new Exception("MyException"));
+            }*/
             System.Windows.Resources.StreamResourceInfo ri = System.Windows.Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
             System.IO.Stream data = ri.Stream;
 
             XDocument doc = XDocument.Load(data);
             string[] x1values = doc.Root.Elements().First(
-                p => p.Attribute("ratio").Value == r1).Element("x1").Value.Split(';');
+                p => p.Attribute("ratio").Value == r).Element("x1").Value.Split(';');
             string[] x2values = doc.Root.Elements().First(
-                p => p.Attribute("ratio").Value == r2).Element("x2").Value.Split(';');
+                p => p.Attribute("ratio").Value == r).Element("x2").Value.Split(';');
+            string[] y1values = doc.Root.Elements().First(
+                p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
+            string[] y2values = doc.Root.Elements().First(
+                p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
 
             right = new Point[x1values.Length];
             left = new Point[x2values.Length];
 
-            right[0] = new Point(double.Parse(x1values[0]), 0.20);
+            for (int i = 0; i < x1values.Length; i++)
+                right[i] = new Point(double.Parse(x1values[i]), double.Parse(y1values[i]));
 
-            double t = 0.30;
-            for (int i = 1; i < x1values.Length; i++)
-            {
-                right[i] = new Point(double.Parse(x1values[i]), t);
-                t += 0.05;
-            }
-
-            left[0] = new Point(double.Parse(x2values[0]), 0.20);
-
-            t = 0.30;
-            for (int i = 1; i < x2values.Length; i++)
-            {
-                left[i] = new Point(double.Parse(x2values[i]), t);
-                t += 0.05;
-            }
+            for (int i = 0; i < x2values.Length; i++)
+                left[i] = new Point(double.Parse(x2values[i]), double.Parse(y2values[i]));
         }
 
         string GetRatio(double ratio)
         {
             ratio = Math.Round(ratio, 3);
-            if ((ratio <= 0.05) || ((ratio > 0.05) && (ratio < 0.075))) return "0,05";
-            else
-                if ((ratio <= 0.1) || ((ratio > 0.1) && (ratio < 0.125))) return "0,10";
-            else
-                    if ((ratio <= 0.15) || ((ratio > 0.15) && (ratio < 0.175))) return "0,15";
-            else
-                        if ((ratio <= 0.20) || ((ratio > 0.20) && (ratio < 0.225))) return "0,20";
-            else
-                            if ((ratio <= 0.25) || ((ratio > 0.25) && (ratio < 0.275))) return "0,25";
-            else
-                                if ((ratio <= 0.30) || ((ratio > 0.30) && (ratio < 0.325))) return "0,30";
-            else throw new Exception("Недопустимое отношение радиусов!");
+            if ((ratio >= 0) && (ratio < 0.025)) return "0,00";
+            else if ((ratio <= 0.05) || ((ratio > 0.05) && (ratio < 0.075))) return "0,05";
+            else if ((ratio <= 0.1) || ((ratio > 0.1) && (ratio < 0.125))) return "0,10";
+            else if ((ratio <= 0.15) || ((ratio > 0.15) && (ratio < 0.175))) return "0,15";
+            else if ((ratio <= 0.20) || ((ratio > 0.20) && (ratio < 0.225))) return "0,20";
+            else if ((ratio <= 0.25) || ((ratio > 0.25) && (ratio < 0.275))) return "0,25";
+            else if ((ratio <= 0.30) || ((ratio > 0.30) && (ratio < 0.325))) return "0,30";
+            else throw new Exception("Недопустимое отношение радиусов!", new Exception("MyException"));
         }
     }
 }

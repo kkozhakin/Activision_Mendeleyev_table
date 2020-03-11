@@ -91,18 +91,75 @@ namespace Activision_Mendeleyev_table.HelperClasses
                             return Parse(left + Math.Log(Parse(inner, ref dat, u)) + right, ref dat, u);
 
                         case 7:
-                            string inleft = inner.Substring(0, inner.IndexOf(';'));
-                            string inright = inner.Substring(inner.IndexOf(';') + 1);
+                            int a = 0, b = 0, v = 0, g = 0;
+                            string inleft = "";
+                            while (inner[g] != ';' || a != 0 || b != 0 || v != 0)
+                            {
+                                inleft += inner[g];
+                                if (inner[g] == '(')
+                                    a++;
+                                else if (inner[g] == ')')
+                                    a--;
+                                else if (inner[g] == '[')
+                                    b++;
+                                else if (inner[g] == ']')
+                                    b--;
+                                else if (inner[g] == '{')
+                                    v++;
+                                else if (inner[g] == '}')
+                                    v--;
+                                g++;
+                            }
+                            
+                            string inright = inner.Substring(g + 1);
                             return Parse(left + Math.Min(Parse(inleft, ref dat, u), Parse(inright, ref dat, u)) + right, ref dat, u);
 
                         case 8:
-                            inleft = inner.Substring(0, inner.IndexOf(';'));
-                            inright = inner.Substring(inner.IndexOf(';') + 1);
+                            a = 0; b = 0; v = 0; g = 0;
+                            inleft = "";
+                            while (inner[g] != ';' || a != 0 || b != 0 || v != 0)
+                            {
+                                inleft += inner[g];
+                                if (inner[g] == '(')
+                                    a++;
+                                else if (inner[g] == ')')
+                                    a--;
+                                else if (inner[g] == '[')
+                                    b++;
+                                else if (inner[g] == ']')
+                                    b--;
+                                else if (inner[g] == '{')
+                                    v++;
+                                else if (inner[g] == '}')
+                                    v--;
+                                g++;
+                            }
+
+                             inright = inner.Substring(g + 1);
                             return Parse(left + Math.Max(Parse(inleft, ref dat, u), Parse(inright, ref dat, u)) + right, ref dat, u);
 
                         case 9:
-                            inleft = inner.Substring(0, inner.IndexOf(';'));
-                            inright = inner.Substring(inner.IndexOf(';') + 1);
+                            a = 0; b = 0; v = 0; g = 0;
+                            inleft = "";
+                            while (inner[g] != ';' || a != 0 || b != 0 || v != 0)
+                            {
+                                inleft += inner[g];
+                                if (inner[g] == '(')
+                                    a++;
+                                else if (inner[g] == ')')
+                                    a--;
+                                else if (inner[g] == '[')
+                                    b++;
+                                else if (inner[g] == ']')
+                                    b--;
+                                else if (inner[g] == '{')
+                                    v++;
+                                else if (inner[g] == '}')
+                                    v--;
+                                g++;
+                            }
+
+                            inright = inner.Substring(g + 1);
                             return Parse(left + Math.Pow(Parse(inleft, ref dat, u), Parse(inright, ref dat, u)) + right, ref dat, u);
                     }
                 }
@@ -131,7 +188,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
             //Парсинг конструкций для получения значений из таблиц
             try
             {
-                Match matchElem = Regex.Match(str, @"([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾·]*){([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾· ]*){([\[\]\d\.\+\-\*\/%\^ _\(\) ]*)}([\w\[\]\.\+\-\*\/%\^ _\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾· ]*)}|([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾·]*){([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾· ]*)}");
+                Match matchElem = Regex.Match(str, @"([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉]*){([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉ ]*){([\[\]\d\.\+\-\*\/%\^_\(\) ]*)}([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉ ]*)}|([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉]*){([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉ ]*)}");
                 if (matchElem.Groups.Count > 1)
                 {
                     inner = StringHelper.DoString(str.Substring(matchElem.Index, matchElem.Length)).Trim(' ');
@@ -174,7 +231,8 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     strs.RemoveFirst();
                     return Parse(left + Find(strs, u).ToString() + right, ref dat, u);
                 }
-                matchElem = Regex.Match(str, @"([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾·]*){([\d ]*;[\d ]*)}");
+
+                matchElem = Regex.Match(str, @"([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉]*){([\d ]*;[\d ]*)}");
                 if (matchElem.Groups.Count > 1)
                 {
                     inner = StringHelper.DoString(str.Substring(matchElem.Index, matchElem.Length)).Trim(' ');
@@ -198,7 +256,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                                 d = MendeleevTable.BinarySistem.Find(x => x.TableName == str1);
 
                             if (d == null & e == null)
-                                throw new Exception("Отсутствует соединение, элемент или система" + str1 + ".");
+                                throw new Exception("Отсутствует соединение, элемент или система" + str1 + ".", new Exception("MyException"));
                             str1 = "";
                         }
                         else if (inner[k] == ';')
@@ -223,18 +281,77 @@ namespace Activision_Mendeleyev_table.HelperClasses
                         return Parse(left + e.Properties[c].Second[r] + right, ref dat, u);
                     return Parse(left + d.Rows[r][c] + right, ref dat, u);
                 }
+
+                matchElem = Regex.Match(str, @"([\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉]*){([\d ]*;[\w\[\]\.\+\-\*\/%\^_\(\)₀₁₂₃₄₅₆₇₈₉ ]*)}");
+                if (matchElem.Groups.Count > 1)
+                {
+                    inner = StringHelper.DoString(str.Substring(matchElem.Index, matchElem.Length)).Trim(' ');
+                    left = str.Substring(0, matchElem.Index);
+                    right = str.Substring(matchElem.Index + matchElem.Length);
+                    str1 = "";
+                    k = 0;
+                    Composition e = null;
+                    DataTable d = null;
+
+                    while (k < inner.Length)
+                    {
+                        if (inner[k] == '{')
+                        {
+                            k++;
+                            e = MendeleevTable.Elems.Find(x => x.Name == str1);
+                            if (e == null)
+                                e = MendeleevTable.Compos.Find(x => x.Name == str1);
+
+                            if (e == null)
+                                d = MendeleevTable.BinarySistem.Find(x => x.TableName == str1);
+
+                            if (d == null & e == null)
+                                throw new Exception("Отсутствует соединение, элемент или система" + str1 + ".", new Exception("MyException"));
+                            str1 = "";
+                        }
+                        else if (inner[k] == ';')
+                        {
+                            k++;
+                            int.TryParse(str1, out r);
+                            str1 = "";
+                        }
+                        else if (inner[k] == '}')
+                        {
+                            k++;
+                            if (e != null)
+                            {
+                                for (c = 0; c < e.Properties.Count; c++)
+                                    if (e.Properties[c].First.Second == str1)
+                                        break;
+                            }
+                            else
+                                for (c = 0; c < d.Columns.Count; c++)
+                                    if (d.Columns[c].Caption == str1)
+                                        break;
+                            str1 = "";
+                        }
+                        else
+                        {
+                            str1 += inner[k];
+                            k++;
+                        }
+                    }
+                    if (e != null)
+                        return Parse(left + e.Properties[c].Second[r] + right, ref dat, u);
+                    return Parse(left + d.Rows[r][c] + right, ref dat, u);
+                }              
             }
             catch (FormatException)
             {
-                throw new FormatException(string.Format("Неверная входная строка '{0}'", str));
+                throw new FormatException(string.Format("Неверная входная строка '{0}'", str), new Exception("MyException"));
             }
             catch (ArgumentOutOfRangeException)
             {
-                throw new FormatException(string.Format("Отсутствует строка {0} или стобец {1} у данного элемента/соединения.", r, c));
+                throw new FormatException(string.Format("Отсутствует строка {0} или стобец {1} у данного элемента/соединения.", r, c), new Exception("MyException"));
             }
             catch (NullReferenceException)
             {
-                throw new FormatException("Отсутствует содержание ячейки, к которой вы обратились.");
+                throw new FormatException("Отсутствует содержание ячейки, к которой вы обратились.", new Exception("MyException"));
             }
 
             // Парсинг скобок
@@ -299,7 +416,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
             if (double.TryParse(str1, out double num))
                 return num;
             else
-                throw new FormatException(string.Format("Неверная входная строка '{0}'", str));
+                throw new FormatException(string.Format("Неверная входная строка '{0}'", str), new Exception("MyException"));
         }
 
         /// <summary>
@@ -343,7 +460,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     return a % b;
 
                 default:
-                    throw new FormatException(string.Format("Неверная входная строка '{0}'", match.Value));
+                    throw new FormatException(string.Format("Неверная входная строка '{0}'", match.Value), new Exception("MyException"));
             }
         }
 
@@ -362,7 +479,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 e = MendeleevTable.Compos.Find(x => x.Name == str.Value);
 
             if (d == null & e == null)
-                throw new Exception("Отсутствует соединение или элемент" + str.Value + ".");
+                throw new Exception("Отсутствует соединение или элемент" + str.Value + ".", new Exception("MyException"));
 
             str = str.Next;
             int r = -1;
@@ -374,24 +491,24 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 Pair<Pair<string, string>, List<string>> v = data.Find(x => x.First.Second == str.Value);
 
                 if (v == null)
-                    throw new Exception("Отсутствует свойство " + str.Value + " у данного соединения или элемента.");
+                    throw new Exception("Отсутствует свойство " + str.Value + " у данного соединения или элемента.", new Exception("MyException"));
 
                 str = str.Next;
 
                 if (str == null)
-                    return double.Parse(v.Second[0]);
+                    return double.Parse(v.Second[v.Second.Count > u ? u : 0]);
 
                 for (int i = 0; i < v.Second.Count; i++)
                     if (v.Second[i] == str.Value)
                         r = i;
 
                 if (r == -1)
-                    throw new Exception("Отсутствует значение параметра " + str.Previous.Value + " равного " + str.Value + " у данного соединения или элемента.");
+                    throw new Exception("Отсутствует значение параметра " + str.Previous.Value + " равного " + str.Value + " у данного соединения или элемента.", new Exception("MyException"));
 
                 v = data.Find(x => x.First.Second == strs.Last.Value);
 
                 if (v == null)
-                    throw new Exception("Отсутствует параметр " + strs.Last.Value + " у данного соединения или элемента.");
+                    throw new Exception("Отсутствует параметр " + strs.Last.Value + " у данного соединения или элемента.", new Exception("MyException"));
 
                 return double.Parse(v.Second[r]);
             }
@@ -402,7 +519,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     c = i;
 
             if (c == -1)
-                throw new Exception("Отсутствует свойство " + str.Value + " у данной системы соединений.");
+                throw new Exception("Отсутствует свойство " + str.Value + " у данной системы соединений.", new Exception("MyException"));
 
             str = str.Next;
 
@@ -414,7 +531,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     r = i;
 
             if (r == -1)
-                throw new Exception("Отсутствует значение параметра " + str.Previous.Value + " равного " + str.Value + " у данной системы соединений.");
+                throw new Exception("Отсутствует значение параметра " + str.Previous.Value + " равного " + str.Value + " у данной системы соединений.", new Exception("MyException"));
 
             str = str.Next;
             c = -1;
@@ -423,7 +540,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     c = i;
 
             if (c == -1)
-                throw new Exception("Отсутствует параметр " + strs.Last.Value + " у данной системы соединений.");
+                throw new Exception("Отсутствует параметр " + strs.Last.Value + " у данной системы соединений.", new Exception("MyException"));
 
             return double.Parse(d.Rows[r][c].ToString());
         }

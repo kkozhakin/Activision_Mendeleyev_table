@@ -17,7 +17,7 @@ namespace Activision_Mendeleyev_table.Approximation
             double funN(double[] par)
             {
                 if (tab.Count == 0)
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("", new Exception("MyException"));
                 double result = ApproxiAccuracy(tab, Function, par);
                 return result;
             }
@@ -109,8 +109,7 @@ namespace Activision_Mendeleyev_table.Approximation
             double[] Pmin = new double[NC];
             while ((J < Jmax) & (Cond == 0))
             {
-                //if ( Y0 <= Y1 ) /* Make H smaller ERROR!!!*/
-                if (Y0 < Y1) /* Make H smaller CORRECT!!! Исправил 20.07.2018 */
+                if (Y0 < Y1) /* Make H smaller */
                 {
                     Y2 = Y1;
                     H = H / 2.0;
@@ -231,7 +230,7 @@ namespace Activision_Mendeleyev_table.Approximation
             }
 
             while (iter < Max & Math.Abs(F1 - F2) > Epsilon & deltaX > Delta);
-            if (iter >= Max) ;//////////////////////////////////////
+            //if (iter >= Max)
             // {
             //string Error = "\n* * * Количество итераций превысило Max = {0} * * *\n";
             //Console.WriteLine(Error, Max); }

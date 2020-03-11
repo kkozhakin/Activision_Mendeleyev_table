@@ -38,9 +38,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 }
                 return child;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                MessageBox.Show("Ошибка получения данных из таблицы функция (GetVisualChild<T>)!\n\n" + exc.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка получения данных из таблицы функция (GetVisualChild<T>)!\n\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 
@@ -66,9 +66,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 }
                 return row;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                MessageBox.Show("Ошибка получения данных из таблицы функция (GetRow)!\n\n" + exc.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка получения данных из таблицы функция (GetRow)!\n\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
         }
@@ -139,9 +139,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 }
                 return null;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                MessageBox.Show("Ошибка получения данных из таблицы функция (GetCell)!\n\n" + exc.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка получения данных из таблицы функция (GetCell)!\n\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
         }

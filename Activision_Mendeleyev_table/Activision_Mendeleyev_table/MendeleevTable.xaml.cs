@@ -297,15 +297,6 @@ namespace Activision_Mendeleyev_table
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var mbResult = MessageBox.Show("Вы точно хотите выйти из приложения?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (mbResult == MessageBoxResult.Yes)
-                Application.Current.Shutdown();
-            else
-                e.Cancel = true;
-        }
-
         /// <summary>
         /// Открывает окно справки
         /// </summary>

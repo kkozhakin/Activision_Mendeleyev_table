@@ -18,7 +18,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         public string Name { get; set; }
 
         /// <summary>
-        /// Лист свойств и соответствующих им значений
+        /// Лист свойств и соответствующих их значений
         /// </summary>
         [XmlArray("Properties"), XmlArrayItem("Property")]
         public List<Pair<Pair<string, string>, List<string>>> Properties { get; set; }

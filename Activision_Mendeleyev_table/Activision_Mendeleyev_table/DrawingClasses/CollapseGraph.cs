@@ -28,7 +28,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public CollapseGraph(Graphics g, BinSystem system, int widht)
         {
             this.a = widht - 30;
-            this.g = g;  
+            this.g = g;
             this.system = system;
         }
 
@@ -69,12 +69,13 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             left = new Point[collapse.left.Length];
             for (int i = 0; i < left.Length; i++)
             {
-                int x = 30 + (int)(a * (collapse.left[i].X));
+                int x = 30 + (int)(a * collapse.left[i].X);
                 int y = a - (int)(a * ((collapse.left[i].Y * system.Tmax - downT) / (upT - downT)));
                 y = y > a ? a : y;
 
                 left[i] = new Point(x, y);
             }
+
 
             g.DrawLines(pen, right);
             g.DrawLines(pen, left);
@@ -101,18 +102,17 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             g.DrawString(string.Format("{0:f0}", upT), new Font("X", 8), Brushes.Black, new Point(0, 0));
             g.DrawString(string.Format("{0:f0}", downT), new Font("X", 8), Brushes.Black, new Point(0, a));
 
-            g.DrawString(system.elementA, new Font("X", 14), Brushes.Black, new Point(30, a + 20));
-            g.DrawString(system.elementB, new Font("X", 14), Brushes.Black, new Point(a, a + 20));
+            g.DrawString(system.elementA + system.elementX, new Font("X", 14), Brushes.Black, new Point(30, a + 20));
+            g.DrawString(system.elementB + system.elementX, new Font("X", 14), Brushes.Black, new Point(a - 20, a + 20));
 
             g.DrawLine(Pens.Black, 30, 0, 30, a + 30);
             g.DrawLine(Pens.Black, 0, a, a + 30, a);
 
-            for (double x = 0; x <= 1.0; x += 0.10)
+            for (double x = 0; x <= 1; x += 0.1)
             {
-                g.DrawString(x.ToString(), new Font("X", 8), Brushes.Black, 20 + (float)(a * x), (float)a + 6);
+                g.DrawString(1 - x < 0.1?"0":x <= 0.5?x.ToString():(1 - x).ToString(), new Font("X", 8), Brushes.Black, 20 + (float)(a * x), (float)a + 6);
                 g.DrawLine(Pens.Black, 30 + (int)(a * x), a - 5, 30 + (int)(a * x), a + 5);
             }
-
         }
 
         public void DrawExperiment()
