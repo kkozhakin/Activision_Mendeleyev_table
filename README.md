@@ -1,6 +1,9 @@
 # Activision_Mendeleyev_table
 
-This program is intended for visualization of the periodic table:
-1.  each atom (ion) will be characterized by crystal-chemical properties (size, formal charge, electric power, etc.);
-2.  for the selected set of atoms according to the proposed ratios of the formula coefficients, it is planned to organize a compound formula for which the structural characteristics characterizing it (ionicity, atomic size ratio, coordination numbers for atoms, etc.) will be introduced;
-3.  for the selected pair of compounds, it is planned to calculate the region of miscibility from both compounds, the decay dome with physical temperature, and a number of thermodynamic parameters.
+The work shows how, based on an interactive table, D.I. Mendeleev combine into a single settlement reference expandable system a lot of data on the properties of atoms (ions), compounds and a set of formulas. Software systems of formulas for calculating the thermodynamic mixing function ∆Hsm and its approximation are built into the indicated system.
+
+# Application features:
+• Get information about atoms, chemical compounds and binary systems of compounds;
+• Change (add) data on atoms, ions and compounds, as well as add new chemical compounds / systems of compounds.
+• Solve the problem of approximating a tabular dependence obtained by experimental estimation of the phase boundary of a binary system, a functional dependence that theoretically determines the thermodynamic mixing function.
+• Assess the sensitivity (influence) of the parameters of the mixing function on the final result
