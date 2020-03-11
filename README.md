@@ -1,6 +1,6 @@
 # Activision_Mendeleyev_table
 
-The work shows how, based on an interactive table, D.I. Mendeleev combine into a single settlement reference expandable system a lot of data on the properties of atoms (ions), compounds and a set of formulas. Software systems of formulas for calculating the thermodynamic mixing function ∆Hsm and its approximation are built into the indicated system.
+This program allows you to build a decay dome for a binary system of compounds based on experimental and theoretical data. Also changes the coefficients of the formulas to maximize approximation to the experiment
 
 # Application features:
 • Get information about atoms, chemical compounds and binary systems of compounds;
