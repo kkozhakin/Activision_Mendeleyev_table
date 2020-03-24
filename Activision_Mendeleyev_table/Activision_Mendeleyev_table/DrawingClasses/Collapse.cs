@@ -5,11 +5,25 @@ using System.Xml.Linq;
 
 namespace Activision_Mendeleyev_table.DrawingClasses
 {
+    /// <summary>
+    /// Класс, содержащий набор точек фазовой диаграммы и методы их получения
+    /// </summary>
     class Collapse
     {
+        /// <summary>
+        /// Набор точек правого соединений
+        /// </summary>
         public Point[] right;
+
+        /// <summary>
+        /// Набор точек левого соединений
+        /// </summary>
         public Point[] left;
 
+        /// <summary>
+        /// Получает точки для фазовой диаграммы
+        /// </summary>
+        /// <param name="system">система соединений</param>
         public Collapse(BinSystem system)
         {
             string r = GetRatio(system.delR / Math.Min(system.R1, system.R2));
@@ -49,6 +63,11 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 left[i] = new Point(double.Parse(x2values[i]), double.Parse(y2values[i]));
         }
 
+        /// <summary>
+        /// Получает соотношение радиусов
+        /// </summary>
+        /// <param name="ratio">delR/Rmin</param>
+        /// <returns>соотношение радиусов</returns>
         string GetRatio(double ratio)
         {
             ratio = Math.Round(ratio, 3);

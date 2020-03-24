@@ -17,11 +17,23 @@ namespace Activision_Mendeleyev_table
     /// </summary>
     public partial class DomeOfDecay : Window
     {
+        /// <summary>
+        /// Лист точек, представленных в DataGrid
+        /// </summary>
         List<List<double>> dat = new List<List<double>>();
+        /// <summary>
+        /// Системы соединений(базовая и аппроксимированная)
+        /// </summary>
         BinSystem sys, sys_ap = null;
+        /// <summary>
+        /// Графики(купол распада/функция смешения и аппроксимированная функция смешения)
+        /// </summary>
         DrawingClasses.CollapseGraph graph, graph_ap;
-        System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
+        /// <summary>
+        /// Флаг: true - купол распада, false - функция смешения
+        /// </summary>
         bool f = true;
+        System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
 
         [DllImport("user32.dll")]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -38,6 +50,10 @@ namespace Activision_Mendeleyev_table
             SetWindowLong(hwnd, GWL_STYLE, (int)(value & ~WS_MAXIMIZEBOX));
         }
 
+        /// <summary>
+        /// Первоначальные настройки и построение купола распада
+        /// </summary>
+        /// <param name="name">обозначение системы</param>
         public DomeOfDecay(string name)
         {
             InitializeComponent();
@@ -72,6 +88,11 @@ namespace Activision_Mendeleyev_table
             Points.ItemsSource = dat;
         }
 
+        /// <summary>
+        /// Получение химических элементов из обозначения системы
+        /// </summary>
+        /// <param name="s">обозначение системы</param>
+        /// <returns>массив обозначений химических элементов</returns>
         public static string[] Parse(string s)
         {
             string[] names = new string[] { "", "", ""};
@@ -110,6 +131,9 @@ namespace Activision_Mendeleyev_table
             Width = e.NewSize.Height + 92;
         }
 
+        /// <summary>
+        /// Построение графиков
+        /// </summary>
         private void diag_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -167,6 +191,9 @@ namespace Activision_Mendeleyev_table
                 dat[e.Row.GetIndex()][1] = p;
         }
 
+        /// <summary>
+        /// Построение купола распада
+        /// </summary>
         private void Build_Click(object sender, RoutedEventArgs e)
         {
             if (!f && sys_ap != null)
@@ -181,6 +208,9 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
+        /// <summary>
+        /// Запускает оценку чувствительности
+        /// </summary>
         private void Sensitivity_Click(object sender, RoutedEventArgs e)
         {
             f = false;
@@ -218,6 +248,9 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
+        /// <summary>
+        /// Сохранение экспериментальных точек в файл
+        /// </summary>
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
@@ -235,6 +268,9 @@ namespace Activision_Mendeleyev_table
                         sw.WriteLine(dat[i][0] + " " + dat[i][1]);
         }
 
+        /// <summary>
+        /// Загрузка экспериментальных точек из файла
+        /// </summary>
         private void Load_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
@@ -265,6 +301,9 @@ namespace Activision_Mendeleyev_table
             Points_RowEditEnding(this, new DataGridRowEditEndingEventArgs(new DataGridRow(), DataGridEditAction.Commit));
         }
 
+        /// <summary>
+        /// Открывает окно настройки параметров
+        /// </summary>
         private void DataSettings_Click(object sender, RoutedEventArgs e)
         {
             DataSettings ds = new DataSettings(sys);
@@ -282,11 +321,24 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
+        /// <summary>
+        /// Задает флаг, определяющий формат отображения эксперимента точками
+        /// </summary>
         private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {
             DrawingClasses.CollapseGraph.ExperimentIsPoints = true;
         }
+        /// <summary>
+        /// Задает флаг, определяющий формат отображения эксперимента ломанными
+        /// </summary>
+        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DrawingClasses.CollapseGraph.ExperimentIsPoints = false;
+        }
 
+        /// <summary>
+        /// Запускает аппроксимацию функции смешения
+        /// </summary>
         private void Approxi_Click(object sender, RoutedEventArgs e)
         {
             f = false;
@@ -300,6 +352,9 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
+        /// <summary>
+        /// Задает границы температуры(графика по оси Y)
+        /// </summary>
         private void setBorders()
         {
             int t = -1;
@@ -346,6 +401,9 @@ namespace Activision_Mendeleyev_table
             }
         }
 
+        /// <summary>
+        /// Задает цвета отображения графиков
+        /// </summary>
         private void setColor()
         {
             byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(Experiment.SelectedColor.Value.B * (Math.Pow(256, 0)) +
@@ -392,6 +450,9 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
+        /// <summary>
+        /// Возвращает к построению купола распада
+        /// </summary>
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             f = true;
@@ -425,11 +486,10 @@ namespace Activision_Mendeleyev_table
             diag.Refresh();
         }
 
-        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
-        {
-            DrawingClasses.CollapseGraph.ExperimentIsPoints = false;
-        }
-
+        /// <summary>
+        /// Аппроксимация функции
+        /// </summary>
+        /// <param name="par">набор изменяемых параметров</param>
         private void Approximate(double[] par)
         {
             List<HelperClasses.Point> Dots = new List<HelperClasses.Point>();

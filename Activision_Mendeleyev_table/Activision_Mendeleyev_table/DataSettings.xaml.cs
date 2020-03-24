@@ -8,8 +8,15 @@ namespace Activision_Mendeleyev_table
     /// </summary>
     public partial class DataSettings : Window
     {
+        /// <summary>
+        /// Система соединений
+        /// </summary>
         private BinSystem sys;
 
+        /// <summary>
+        /// Настройка некоторых параметров системы
+        /// </summary>
+        /// <param name="sys">система соединений</param>
         public DataSettings(BinSystem sys)
         {
             InitializeComponent();
@@ -31,8 +38,10 @@ namespace Activision_Mendeleyev_table
             }
         }
 
+        /// <summary>
+        /// Возвращает систему соединений
+        /// </summary>
         public BinSystem GetBS() { return sys; }
-
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -40,6 +49,9 @@ namespace Activision_Mendeleyev_table
                 e.Cancel = true;
         }
 
+        /// <summary>
+        /// Сохраняет параметры в системе и закрывает окно
+        /// </summary>
         private void Save_Click(object sender, RoutedEventArgs e)
         {
 

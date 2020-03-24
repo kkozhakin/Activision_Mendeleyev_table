@@ -96,7 +96,6 @@
     </Compile>
     <Compile Include="DrawingClasses\Collapse.cs" />
     <Compile Include="DrawingClasses\CollapseGraph.cs" />
-    <Compile Include="DrawingClasses\Diagram.cs" />
     <Compile Include="FormulaInput.xaml.cs">
       <DependentUpon>FormulaInput.xaml</DependentUpon>
     </Compile>
@@ -108,7 +107,6 @@
     </Compile>
     <Compile Include="HelperClasses\BinSystem.cs" />
     <Compile Include="HelperClasses\Composition.cs" />
-    <Compile Include="HelperClasses\Energy.cs" />
     <Compile Include="HelperClasses\HotKey.cs" />
     <Compile Include="HelperClasses\MathParser.cs" />
     <Compile Include="HelperClasses\Pair.cs" />

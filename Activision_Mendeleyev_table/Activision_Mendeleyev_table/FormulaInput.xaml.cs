@@ -46,6 +46,9 @@ namespace Activision_Mendeleyev_table
             Close();
         }
 
+        /// <summary>
+        /// Просмотр списка формул
+        /// </summary>
         private void OpenFormuls_Click(object sender, RoutedEventArgs e)
         {
             new FormulaList().Show();

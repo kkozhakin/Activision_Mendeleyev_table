@@ -326,6 +326,9 @@ namespace Activision_Mendeleyev_table
                 DomeOfDecayWindowOpen.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// Открывает окно построения купола распада
+        /// </summary>
         private void DomeOfDecayWindowOpen_Click(object sender, RoutedEventArgs e)
         {
             new DomeOfDecay(elem).ShowDialog();

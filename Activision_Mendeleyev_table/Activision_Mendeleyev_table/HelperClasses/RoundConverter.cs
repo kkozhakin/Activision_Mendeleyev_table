@@ -2,6 +2,9 @@
 
 namespace Activision_Mendeleyev_table.HelperClasses
 {
+    /// <summary>
+    /// Класс, позволяющий округлять значения в таблицах
+    /// </summary>
     public class RoundConverter : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
