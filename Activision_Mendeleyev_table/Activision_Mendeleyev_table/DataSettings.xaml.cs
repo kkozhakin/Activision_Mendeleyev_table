@@ -23,10 +23,10 @@ namespace Activision_Mendeleyev_table
             this.sys = sys;
             if (sys != null)
             {
-                elemA.Text = sys.elementA;
-                elemB.Text = sys.elementB;
-                elemX.Text = sys.elementX;
-                double[] par = sys.getData();
+                elemA.Text = sys.ElementA;
+                elemB.Text = sys.ElementB;
+                elemX.Text = sys.ElementX;
+                double[] par = sys.GetData();
                 numX.Text = sys.numX.ToString();
                 numB.Text = sys.numB.ToString();
                 numA.Text = sys.numA.ToString();
@@ -67,6 +67,7 @@ namespace Activision_Mendeleyev_table
                 sys.symbols[0] = r.Text;
                 sys.symbols[1] = x.Text;
                 sys.symbols[2] = FZ.Text;
+                _A.Text = _A.Text.Replace('.', ',');
                 double q = -1;
                 int w = -1;
                 if (!double.TryParse(z.Text, out q) || q < 0)
@@ -87,7 +88,7 @@ namespace Activision_Mendeleyev_table
                     MessageBox.Show("Поле A - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
                 {
-                    sys.setData(double.Parse(c.Text), double.Parse(m.Text), double.Parse(n.Text), double.Parse(z.Text));
+                    sys.SetData(double.Parse(c.Text), double.Parse(m.Text), double.Parse(n.Text), double.Parse(z.Text));
                     sys.numA = int.Parse(numA.Text);
                     sys.numB = int.Parse(numB.Text);
                     sys.numX = int.Parse(numX.Text);

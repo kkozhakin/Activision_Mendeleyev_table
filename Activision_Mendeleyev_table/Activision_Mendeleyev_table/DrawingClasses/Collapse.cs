@@ -11,12 +11,12 @@ namespace Activision_Mendeleyev_table.DrawingClasses
     class Collapse
     {
         /// <summary>
-        /// Набор точек правого соединений
+        /// Набор точек правого соединения
         /// </summary>
         public Point[] right;
 
         /// <summary>
-        /// Набор точек левого соединений
+        /// Набор точек левого соединения
         /// </summary>
         public Point[] left;
 
@@ -28,18 +28,6 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         {
             string r = GetRatio(system.delR / Math.Min(system.R1, system.R2));
 
-            /*if (filename == "")
-            {
-                Microsoft.Win32.OpenFileDialog myDialog = new Microsoft.Win32.OpenFileDialog()
-                {
-                    Filter = "XML-файл(*.XML)|*.XML",
-                    CheckFileExists = true
-                };
-
-                if (myDialog.ShowDialog() == true)
-                    filename = myDialog.FileName;
-                else throw new Exception("Файл с точками купола не выбран! Построение невозможно!", new Exception("MyException"));
-            }*/
             System.Windows.Resources.StreamResourceInfo ri = System.Windows.Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
             System.IO.Stream data = ri.Stream;
 
@@ -68,7 +56,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// </summary>
         /// <param name="ratio">delR/Rmin</param>
         /// <returns>соотношение радиусов</returns>
-        string GetRatio(double ratio)
+        private string GetRatio(double ratio)
         {
             ratio = Math.Round(ratio, 3);
             if ((ratio >= 0) && (ratio < 0.025)) return "0,00";

@@ -17,17 +17,17 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Таблица данных
         /// </summary>
-        DataTable dat;
+        private DataTable dat;
 
         /// <summary>
         /// Обозначение соединения(системы соединений)
         /// </summary>
-        string elem;
+        private string elem;
 
         /// <summary>
         /// Флаг: true - соединение, false - система
         /// </summary>
-        bool f;
+        private bool f;
 
         /// <summary>
         /// Конструктор, инициализирующий окно таблицы соединения(системы соединений)
@@ -115,7 +115,7 @@ namespace Activision_Mendeleyev_table
             if (f && dat.Columns.Count > 0 || !f && dat.Columns.Count > 1)
                 DelColumn.IsEnabled = true;
             if (dat.Rows.Count > 0)
-                DelRow.IsEnabled = true;
+                DelSelectedRows.IsEnabled = true;
         }
 
         /// <summary>
@@ -133,14 +133,14 @@ namespace Activision_Mendeleyev_table
         {
             dat.Rows.Add();
             if (dat.Rows.Count > 0)
-                DelRow.IsEnabled = true;
+                DelSelectedRows.IsEnabled = true;
             if (!f)
                 dat.Rows[dat.Rows.Count - 1][0] = 0;
             CollectionViewSource.GetDefaultView(ComposSystemTable.ItemsSource).Refresh();
         }
 
         /// <summary>
-        /// Удаляет столбец в таблицу
+        /// Удаляет столбец в таблице
         /// </summary>
         private void DelColumn_Click(object sender, RoutedEventArgs e)
         {
@@ -151,14 +151,26 @@ namespace Activision_Mendeleyev_table
         }
 
         /// <summary>
-        /// Удаляет строку в таблицу
+        /// Удаляет выделенные строки в таблице
         /// </summary>
-        private void DelRow_Click(object sender, RoutedEventArgs e)
+        private void DelSelectedRows_Click(object sender, RoutedEventArgs e)
         {
-            if (dat.Rows.Count <= 1)
-                DelRow.IsEnabled = false;
-            dat.Rows.RemoveAt(dat.Rows.Count - 1);
-            CollectionViewSource.GetDefaultView(ComposSystemTable.ItemsSource).Refresh();
+            try
+            {
+                while (ComposSystemTable.SelectedItems.Count > 0)
+                {
+                    int selectedIndex = ComposSystemTable.SelectedIndex;
+                    DrawingClasses.CollapseGraph.RemoveSelectedPoint(selectedIndex);
+                    dat.Rows.RemoveAt(selectedIndex);
+                    ComposSystemTable.Items.Refresh();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Невозможно удалить этот элемент!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            if (dat.Rows.Count == 0)
+                DelSelectedRows.IsEnabled = false;
         }
 
         /// <summary>
@@ -171,11 +183,12 @@ namespace Activision_Mendeleyev_table
             AddColumn.Visibility = Visibility.Hidden;
             AddRow.Visibility = Visibility.Hidden;
             DelColumn.Visibility = Visibility.Hidden;
-            DelRow.Visibility = Visibility.Hidden;
+            DelSelectedRows.Visibility = Visibility.Hidden;
             Calculate.Visibility = Visibility.Hidden;
             AddFormul.Visibility = Visibility.Hidden;
             if (!f)
                 DomeOfDecayWindowOpen.Visibility = Visibility.Visible;
+            MathParser.f = f;
 
             try
             {
@@ -268,10 +281,11 @@ namespace Activision_Mendeleyev_table
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                e.Cancel = true;
-            else
-                dat.RejectChanges();
+            if (EditTable.Visibility == Visibility.Hidden)
+                if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                    e.Cancel = true;
+                else
+                    dat.RejectChanges();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -281,12 +295,12 @@ namespace Activision_Mendeleyev_table
                 AddRow.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
                 AddColumn.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
                 DelColumn.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
-                DelRow.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
+                DelSelectedRows.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
                 AddFormul.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
                 Calculate.Width += (e.NewSize.Width - e.PreviousSize.Width) / 6;
                 AddRow.RenderTransform = new TranslateTransform(360 + (e.NewSize.Width - 1050) / 3, 0);
                 AddColumn.RenderTransform = new TranslateTransform(190 + (e.NewSize.Width - 1050) / 6, 0);
-                DelRow.RenderTransform = new TranslateTransform(700 + (e.NewSize.Width - 1050) / 1.5, 0);
+                DelSelectedRows.RenderTransform = new TranslateTransform(700 + (e.NewSize.Width - 1050) / 1.5, 0);
                 DelColumn.RenderTransform = new TranslateTransform(530 + (e.NewSize.Width - 1050) / 2, 0);
                 Calculate.RenderTransform = new TranslateTransform(870 + (e.NewSize.Width - 1050) / 1.2, 0);
             }
@@ -319,7 +333,7 @@ namespace Activision_Mendeleyev_table
             AddColumn.Visibility = Visibility.Visible;
             AddRow.Visibility = Visibility.Visible;
             DelColumn.Visibility = Visibility.Visible;
-            DelRow.Visibility = Visibility.Visible;
+            DelSelectedRows.Visibility = Visibility.Visible;
             Calculate.Visibility = Visibility.Visible;
             AddFormul.Visibility = Visibility.Visible;
             if (!f)

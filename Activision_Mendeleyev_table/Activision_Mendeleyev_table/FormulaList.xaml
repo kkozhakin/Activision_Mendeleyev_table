@@ -9,6 +9,5 @@
     <Grid>
         <DataGrid x:Name="formuls" CanUserSortColumns="False" CanUserReorderColumns="False" CanUserResizeColumns="False" ColumnWidth="*"
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"/>
-
     </Grid>
 </Window>

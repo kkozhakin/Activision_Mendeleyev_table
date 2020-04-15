@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Activision_Mendeleyev_table.Approximation
 {
     /// <summary>
-    /// Класс, содержащий методы аппрокисимации функции
+    /// Класс, содержащий методы аппроксимации функции
     /// </summary>
     public class Library
     {
@@ -89,8 +89,7 @@ namespace Activision_Mendeleyev_table.Approximation
         /// <param name="Delta">допустимое отклонение для ширины интервала</param>
         /// <param name="Epsilon">допустимое отклонение для |f(b) - f(a)|</param>
         /// <returns>параметры (точка) минимума вдоль градиента</returns>
-        static double[] Quadmin(Func<double[], double> funN,
-        double[] X0, double Delta = 1E-5, double Epsilon = 1E-7)
+        private static double[] Quadmin(Func<double[], double> funN, double[] X0, double Delta = 1E-5, double Epsilon = 1E-7)
         {
             int NC = X0.Length;
             double Y0 = funN(X0);
@@ -205,7 +204,7 @@ namespace Activision_Mendeleyev_table.Approximation
         /// <returns>оптимальный вектор параметров</returns>
         public static double[] GradientMinimization(Func<double[], double> funN, double[] X0, double Delta = 1E-8, double Epsilon = 1E-11, int Max = 100)
         {
-            int NC = X0.Length;   
+            int NC = X0.Length;
             double[] Q1 = new double[NC];
             double[] Q2 = new double[NC];
             double F1, F2;
@@ -231,7 +230,6 @@ namespace Activision_Mendeleyev_table.Approximation
                     }
                 } 
             }
-
             while (iter < Max & Math.Abs(F1 - F2) > Epsilon & deltaX > Delta);
             double deltaF = (F1 - F2);
             return Q2;

@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Activision_Mendeleyev_table.ColumnAddWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAQAAAAAAAAAAAAAAAAAAAAAEAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>ColumnAddWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.ComposSystemContent" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAgBAAAGAAAAAAAQpAAAAAAAAAJAAAQAAAAAAAAIAA=</HashCode>
+      <FileName>ComposSystemContent.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.CreateComposSystem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAQAAQAAAAAAAA=</HashCode>
+      <FileName>CreateComposSystem.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.DataSettings" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAABAAAAAABAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataSettings.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.DomeOfDecay" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAgAWAAACAKDABGIJhAAAUADQAAABAYAQAAACAIDIA=</HashCode>
+      <FileName>DomeOfDecay.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.ElemContent" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAgBAAAGAAAAAAAAJAAAAAABAAIAAAAAAAAEAAAIAA=</HashCode>
+      <FileName>ElemContent.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.FormulaInput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAQAAAAAAAAAAAAAQAAAEAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>FormulaInput.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.FormulaList" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FormulaList.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.Help" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Help.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.MendeleevTable" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAIAAIAAAYgAAAAAAAIIAgAAAQAAAAA=</HashCode>
+      <FileName>MendeleevTable.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.Approximation.Criterion">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Approximation\Criterion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.Approximation.Library">
+    <Position X="7.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAIAAAgAAAAAgA=</HashCode>
+      <FileName>Approximation\Library.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.DrawingClasses.Collapse">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAIAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>DrawingClasses\Collapse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.DrawingClasses.CollapseGraph">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABAEAAAAAAAAAACkQAgAAAABAAA4CAAIEEEBgoAAiII=</HashCode>
+      <FileName>DrawingClasses\CollapseGraph.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.BinSystem">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>IAkRAEAAAAAAAAEkAABAIOQgQBQogAGAMgAAMQACEZA=</HashCode>
+      <FileName>HelperClasses\BinSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.Composition">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>HelperClasses\Composition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.DataGridHelper">
+    <Position X="7.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>RAAAAAAAAAACAAAAAAAAACAAASBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HelperClasses\DataGridHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.HotKey" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AQACAAAAACAEAAQAAAAAAAAAwAABAAAAAQACAAAAGAQ=</HashCode>
+      <FileName>HelperClasses\HotKey.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.MathParser">
+    <Position X="6" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAQAAAAAAAAAAQAIAAAYAAAAAAAABAA=</HashCode>
+      <FileName>HelperClasses\MathParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.Pair&lt;T, U&gt;" Collapsed="true">
+    <Position X="2.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HelperClasses\Pair.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.Point" Collapsed="true">
+    <Position X="2.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAYAA=</HashCode>
+      <FileName>HelperClasses\Point.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.RoundConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HelperClasses\RoundConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.Strings" Collapsed="true">
+    <Position X="2.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACBAAAAAIBAAAAWAAABAAwAAAjAAAAAAgE=</HashCode>
+      <FileName>HelperClasses\Strings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Activision_Mendeleyev_table.HelperClasses.StringHelper">
+    <Position X="6" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HelperClasses\Strings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Activision_Mendeleyev_table.HelperClasses.KeyModifier" Collapsed="true">
+    <Position X="0.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAgAAEAAAAAAAAAAAAAAAoAAAAEAAAA=</HashCode>
+      <FileName>HelperClasses\HotKey.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

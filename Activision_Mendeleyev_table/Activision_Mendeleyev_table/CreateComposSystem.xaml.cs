@@ -11,7 +11,7 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Флаг: true - соединение, false - система
         /// </summary>
-        bool f;
+        private bool f;
 
         /// <summary>
         /// Конструктор, инициализирующий окно создания/выбора соединения(системы соединений)

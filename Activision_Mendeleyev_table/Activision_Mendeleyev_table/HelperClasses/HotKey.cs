@@ -101,11 +101,6 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 UnregisterHotKey(IntPtr.Zero, Id);
         }
 
-        /// <summary>
-        /// ???
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="handled"></param>
         private static void ComponentDispatcherThreadFilterMessage(ref MSG msg, ref bool handled)
         {
             if (!handled && msg.message == WmHotKey)

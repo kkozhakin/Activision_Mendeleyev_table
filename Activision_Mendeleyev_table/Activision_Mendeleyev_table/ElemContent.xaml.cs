@@ -68,7 +68,7 @@ namespace Activision_Mendeleyev_table
             if (dat.Columns.Count > 0)
                 DelColumn.IsEnabled = true;
             if (dat.Rows.Count > 0)
-                DelRow.IsEnabled = true;
+                DelSelectedRows.IsEnabled = true;
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Activision_Mendeleyev_table
         {
             dat.Rows.Add();
             if (dat.Rows.Count > 0)
-                DelRow.IsEnabled = true;
+                DelSelectedRows.IsEnabled = true;
             CollectionViewSource.GetDefaultView(ElemTable.ItemsSource).Refresh();
 
         }
@@ -105,12 +105,24 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Удаляет строку в таблицу
         /// </summary>
-        private void DelRow_Click(object sender, RoutedEventArgs e)
+        private void DelSelectedRows_Click(object sender, RoutedEventArgs e)
         {
-            if (dat.Rows.Count <= 1)
-                DelRow.IsEnabled = false;
-            dat.Rows.RemoveAt(dat.Rows.Count - 1);
-            CollectionViewSource.GetDefaultView(ElemTable.ItemsSource).Refresh();
+            try
+            {
+                while (ElemTable.SelectedItems.Count > 0)
+                {
+                    int selectedIndex = ElemTable.SelectedIndex;
+                    DrawingClasses.CollapseGraph.RemoveSelectedPoint(selectedIndex);
+                    dat.Rows.RemoveAt(selectedIndex);
+                    ElemTable.Items.Refresh();
+                }
+            }
+            catch (System.Exception)
+            {
+                MessageBox.Show("Невозможно удалить этот элемент!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            if (dat.Rows.Count == 0)
+                DelSelectedRows.IsEnabled = false;
         }
 
         /// <summary>
@@ -123,7 +135,7 @@ namespace Activision_Mendeleyev_table
             AddColumn.Visibility = Visibility.Hidden;
             AddRow.Visibility = Visibility.Hidden;
             DelColumn.Visibility = Visibility.Hidden;
-            DelRow.Visibility = Visibility.Hidden;
+            DelSelectedRows.Visibility = Visibility.Hidden;
             Save.Visibility = Visibility.Hidden;
 
             dat.AcceptChanges();
@@ -165,10 +177,11 @@ namespace Activision_Mendeleyev_table
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                e.Cancel = true;
-            else
-                dat.RejectChanges();
+            if (EditTable.Visibility == Visibility.Hidden)
+                if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                    e.Cancel = true;
+                else
+                    dat.RejectChanges();
         }
 
         /// <summary>
@@ -181,7 +194,7 @@ namespace Activision_Mendeleyev_table
             AddColumn.Visibility = Visibility.Visible;
             AddRow.Visibility = Visibility.Visible;
             DelColumn.Visibility = Visibility.Visible;
-            DelRow.Visibility = Visibility.Visible;
+            DelSelectedRows.Visibility = Visibility.Visible;
             Save.Visibility = Visibility.Visible;
         }
 
@@ -192,12 +205,12 @@ namespace Activision_Mendeleyev_table
                 AddRow.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
                 AddColumn.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
                 DelColumn.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
-                DelRow.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
+                DelSelectedRows.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
                 Save.Width += (e.NewSize.Width - e.PreviousSize.Width) / 5;
                 DelColumn.RenderTransform = new TranslateTransform(360 + (e.NewSize.Width - 880) / 2.5, 0);
                 AddRow.RenderTransform = new TranslateTransform(190 + (e.NewSize.Width - 880) / 5, 0);
                 Save.RenderTransform = new TranslateTransform(700 + (e.NewSize.Width - 880) / 1.25, 0);
-                DelRow.RenderTransform = new TranslateTransform(530 + (e.NewSize.Width - 880) / 1.66, 0);
+                DelSelectedRows.RenderTransform = new TranslateTransform(530 + (e.NewSize.Width - 880) / 1.66, 0);
             }
         }
     }

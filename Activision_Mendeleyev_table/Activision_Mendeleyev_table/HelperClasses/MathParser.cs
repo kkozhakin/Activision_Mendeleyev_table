@@ -12,6 +12,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
     public static class MathParser
     {
         /// <summary>
+        /// Флаг: true - соединений, false - система
+        /// </summary>
+        public static bool f = true;
+
+        /// <summary>
         /// Парсинг строки для вычисления значения формулы, если данная строка является формулой
         /// </summary>
         /// <param name="str">содержание ячайки таблицы</param>
@@ -496,7 +501,10 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 str = str.Next;
 
                 if (str == null)
-                    return double.Parse(v.Second[v.Second.Count > u ? u : 0]);
+                    if (f)
+                        return double.Parse(v.Second[v.Second.Count > u ? u : 0]);
+                    else
+                        return double.Parse(v.Second[0]);
 
                 for (int i = 0; i < v.Second.Count; i++)
                     if (v.Second[i] == str.Value)

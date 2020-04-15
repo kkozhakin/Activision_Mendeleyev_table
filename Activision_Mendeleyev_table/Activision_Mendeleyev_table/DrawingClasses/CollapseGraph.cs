@@ -12,56 +12,41 @@ namespace Activision_Mendeleyev_table.DrawingClasses
     class CollapseGraph
     {
         /// <summary>
-        /// Цвет теоритического соотношения
+        /// Карандаш теоритического соотношения
         /// </summary>
-        static Pen pen = Pens.Black;
+        private static Pen pen = Pens.Black;
         /// <summary>
-        /// Цвет экспериментального соотношения
+        /// Карандаш экспериментального соотношения
         /// </summary>
-        static Pen penExp = Pens.Red;
+        private static Pen penExp = Pens.Red;
         /// <summary>
-        /// Цвет аппроксримированного соотношения
+        /// Карандаш аппроксримированного соотношения
         /// </summary>
-        static Pen penApp = Pens.Green;
+        private static Pen penApp = Pens.Green;
         /// <summary>
         /// Точки эксперимента
         /// </summary>
-        static List<PointF> experiment = new List<PointF>();
-        /// <summary>
-        /// Если true показывает эксперимент точками, иначе - ломаными
-        /// </summary>
-        static bool experimetnIsPoints = true;
-
-        /// <summary>
-        /// Верхняя граница температуры(графика по Y)
-        /// </summary>
-        static int upT = -1;
-        /// <summary>
-        /// Нижняя граница температуры(графика по Y)
-        /// </summary>
-        static int downT = -1;
-
+        private static List<PointF> experiment = new List<PointF>();
         /// <summary>
         /// Порверхность для рисования
         /// </summary>
-        Graphics g;
+        private Graphics g;
         /// <summary>
         /// Система соединений
         /// </summary>
-        BinSystem system;
+        private BinSystem system;
         /// <summary>
         /// Ширина поля для диаграммы
         /// </summary>
-        int width;
-
+        private readonly int width;
         /// <summary>
         /// Точки правого соединения(теория)
         /// </summary>
-        Point[] right;
+        private Point[] right;
         /// <summary>
         /// Точки левого соединения(теория)
         /// </summary>
-        Point[] left;
+        private Point[] left;
 
         /// <summary>
         /// Конструктор
@@ -71,7 +56,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <param name="width">ширина поля для диаграммы</param>
         public CollapseGraph(Graphics g, BinSystem system, int width)
         {
-            this.width = width - 30;
+            this.width = width - 80;
             this.g = g;
             this.system = system;
         }
@@ -79,7 +64,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Свойство цвета теоритического соотношения
         /// </summary>
-        static public Color Color
+        public static Color Color
         {
             get { return pen.Color; }
             set { pen = new Pen(value); }
@@ -88,7 +73,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Свойство цвета экспериментального соотношения
         /// </summary>
-        static public Color ExperimentColor
+        public static Color ExperimentColor
         {
             get { return penExp.Color; }
             set { penExp = new Pen(value); }
@@ -97,7 +82,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Свойство цвета аппроксимированного соотношения
         /// </summary>
-        static public Color ApproximationColor
+        public static Color ApproximationColor
         {
             get { return penApp.Color; }
             set { penApp = new Pen(value); }
@@ -109,14 +94,14 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public void DrawCollapse()
         {
             Collapse collapse = new Collapse(system);
-            upT = upT == -1 ? (int)system.Tmax : upT;
-            downT = downT == -1 ? (int)(0.20 * system.Tmax) : downT;
+            UpTemp = UpTemp == -1 ? (int)system.Tmax : UpTemp;
+            DownTemp = DownTemp == -1 ? (int)(0.20 * system.Tmax) : DownTemp;
 
             right = new Point[collapse.right.Length];
             for (int i = 0; i < right.Length; i++)
             {
-                int x = 30 + (int)(width * (1 - collapse.right[i].X));
-                int y = width - (int)(width * ((collapse.right[i].Y * system.Tmax - downT) / (upT - downT)));
+                int x = 80 + (int)(width * (1 - collapse.right[i].X));
+                int y = width - 40 - (int)(width * ((collapse.right[i].Y * system.Tmax - DownTemp) / (UpTemp - DownTemp)));
                 y = y > width ? width : y;
 
                 right[i] = new Point(x, y);
@@ -125,14 +110,14 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             left = new Point[collapse.left.Length];
             for (int i = 0; i < left.Length; i++)
             {
-                int x = 30 + (int)(width * collapse.left[i].X);
-                int y = width - (int)(width * ((collapse.left[i].Y * system.Tmax - downT) / (upT - downT)));
+                int x = 80 + (int)(width * collapse.left[i].X);
+                int y = width - 40 - (int)(width * ((collapse.left[i].Y * system.Tmax - DownTemp) / (UpTemp - DownTemp)));
                 y = y > width ? width : y;
 
                 left[i] = new Point(x, y);
             }
 
-
+            g.DrawString("T, °C", new Font("X", 14), Brushes.Black, new Point(80, 0));
             g.DrawLines(pen, right);
             g.DrawLines(pen, left);
         }
@@ -143,14 +128,15 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <param name="f">флаг: true - аппроксимация, false - теория</param>
         public void DrawDH(bool f = true)
         {
-            downT = downT == -1 ? 0 : downT;
-            upT = upT == -1 ? (int)(system.Hsm(0.5) * 1000) + 50 : upT;
+            DownTemp = DownTemp == -1 ? 0 : DownTemp;
+            UpTemp = UpTemp == -1 ? (int)(system.Hsm(0.5) * 1000) + 100 : UpTemp;
 
             Point[] dh = new Point[21];
             for (double i = 0; i < 1; i += 0.05)
-                dh[(int)Math.Round(i * 20)] = new Point(30 + (int)(i * width), width - (int)(((system.Hsm(i) * 1000 - downT) / (upT - downT)) * width));
+                dh[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Hsm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
 
-            dh[20] = new Point(30 + width, width);
+            dh[20] = new Point(80 + width, width - 40);
+            g.DrawString("ΔHcм, ккал/моль", new Font("X", 14), Brushes.Black, new Point(80, 0));
             if (f)
                 g.DrawLines(penApp, dh);
             else
@@ -162,20 +148,30 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// </summary>
         public void DrawAxes()
         {
-            g.DrawString(string.Format("{0:f0}", upT), new Font("X", 8), Brushes.Black, new Point(0, 0));
-            g.DrawString(string.Format("{0:f0}", downT), new Font("X", 8), Brushes.Black, new Point(0, width));
+            g.DrawString(system.ElementA + system.ElementX, new Font("X", 14), Brushes.Black, new Point(80, width + 30));
+            g.DrawString(system.ElementB + system.ElementX, new Font("X", 14), Brushes.Black, new Point(width - 100, width + 30));
 
-            g.DrawString(system.elementA + system.elementX, new Font("X", 14), Brushes.Black, new Point(30, width + 20));
-            g.DrawString(system.elementB + system.elementX, new Font("X", 14), Brushes.Black, new Point(width - 20, width + 20));
-
-            g.DrawLine(Pens.Black, 30, 0, 30, width + 30);
-            g.DrawLine(Pens.Black, 0, width, width + 30, width);
+            g.DrawLine(Pens.Black, 80, 0, 80, width + 30);
+            g.DrawLine(Pens.Black, 30, width - 40, width + 80, width - 40);
 
             for (double x = 0; x <= 1; x += 0.1)
             {
-                g.DrawString(1 - x < 0.1 ? "0" : x <= 0.5 ? x.ToString() : (1 - x).ToString(), new Font("X", 8), Brushes.Black, 
-                    20 + (float)(width * x), width + 6);
-                g.DrawLine(Pens.Black, 30 + (int)(width * x), width - 5, 30 + (int)(width * x), width + 5);
+                g.DrawString(x <= 0.5 ? x.ToString() : (1 - x).ToString(), new Font("X", 12), Brushes.Black, 
+                    80 + (float)(width * x), width - 30);
+                g.DrawLine(Pens.Black, 80 + (int)(width * x), width - 45, 80 + (int)(width * x), width - 35);
+            }
+            g.DrawString("0", new Font("X", 12), Brushes.Black, width + 30, width - 30);
+
+            double c = Math.Round((UpTemp - DownTemp) / 100.0);
+            if (c < (UpTemp - DownTemp) / 100)
+                c = (c + 1) * 10;
+            else
+                c *= 10;
+
+            for (double x = DownTemp; x <= UpTemp; x += c)
+            {
+                g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 0, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
+                g.DrawLine(Pens.Black, 75, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width), 85, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
             }
         }
 
@@ -190,8 +186,8 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             foreach (var item in experiment)
             {
 
-                int x = 30 + (int)(item.X * width);
-                int y = width - (int)(((item.Y - downT) / (upT - downT)) * width);
+                int x = 80 + (int)(item.X * width);
+                int y = width - 40 - (int)((item.Y - DownTemp) / (UpTemp - DownTemp) * width);
 
                 y = y > width ? width : y;
 
@@ -201,13 +197,13 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                     right.Add(new Point(x, y));
             }
 
-            if (!experimetnIsPoints)
+            if (!ExperimentIsPoints)
             {
                 Point[] arrLeft = left.ToArray();
                 Point[] arrRight = right.ToArray();
 
-                Array.Sort(arrLeft, (x, y) => (x.X.CompareTo(y.X)));
-                Array.Sort(arrRight, (x, y) => (x.X.CompareTo(y.X)));
+                Array.Sort(arrLeft, (x, y) => x.X.CompareTo(y.X));
+                Array.Sort(arrRight, (x, y) => x.X.CompareTo(y.X));
 
                 if (left.Count > 1)
                     g.DrawLines(penExp, arrLeft);
@@ -219,11 +215,11 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             {
                 foreach (var item in left)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 2, item.Y - 2, 4, 4);
+                    g.FillEllipse(penExp.Brush, item.X - 6, item.Y - 6, 12, 12);
                 }
                 foreach (var item in right)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 2, item.Y - 2, 4, 4);
+                    g.FillEllipse(penExp.Brush, item.X - 6, item.Y - 6, 12, 12);
                 }
             }
         }
@@ -231,53 +227,41 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Свойство, определяющее вид отрисовки эксперимента
         /// </summary>
-        static public bool ExperimentIsPoints
-        {
-            get { return experimetnIsPoints; }
-            set { experimetnIsPoints = value; }
-        }
+        public static bool ExperimentIsPoints { get; set; } = true;
 
         /// <summary>
         /// Свойство верхней границы температуры(графика по Y)
         /// </summary>
-        static public int UpTemp
-        {
-            get { return upT; }
-            set { upT = value; }
-        }
+        public static int UpTemp { get; set; } = -1;
 
         /// <summary>
         /// Свойство нижней границы температуры(графика по Y)
         /// </summary>
-        static public int DownTemp
-        {
-            get { return downT; }
-            set { downT = value; }
-        }
+        public static int DownTemp { get; set; } = -1;
 
         /// <summary>
-        /// Добавляет точку в экспиремент 
+        /// Добавляет точку в эксперимент 
         /// </summary>
         /// <param name="x1">координата X</param>
         /// <param name="t">координата Y</param>
-        public static void addExperimentalPoint(double x1, double t)
+        public static void AddExperimentalPoint(double x1, double t)
         {
             experiment.Add(new PointF((float)x1, (float)t));
         }
 
         /// <summary>
-        /// Удаляет последнюю точку из эксперимента
+        /// Удаляет выбранную точку из эксперимента
         /// </summary>
-        public static void removeLastPoint()
+        public static void RemoveSelectedPoint(int i)
         {
-            if (experiment.Count > 0)
-                experiment.RemoveAt(experiment.Count - 1);
+            if (experiment.Count > i)
+                experiment.RemoveAt(i);
         }
 
         /// <summary>
         /// Удаляет все точки из эксперимента
         /// </summary>
-        public static void clearExperiment()
+        public static void ClearExperiment()
         {
             experiment.Clear();
         }

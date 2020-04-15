@@ -7,6 +7,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
     /// </summary>
     public class RoundConverter : System.Windows.Data.IValueConverter
     {
+        /// <summary>
+        /// Округляет значение до 4 знака после запятой
+        /// </summary>
+        /// <param name="value">значение</param>
+        /// <returns>округленное значение</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value != null)

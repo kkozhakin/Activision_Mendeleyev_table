@@ -20,20 +20,20 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Лист точек, представленных в DataGrid
         /// </summary>
-        List<List<double>> dat = new List<List<double>>();
+        private List<List<double>> dat = new List<List<double>>();
         /// <summary>
         /// Системы соединений(базовая и аппроксимированная)
         /// </summary>
-        BinSystem sys, sys_ap = null;
+        private BinSystem sys, sys_ap = null;
         /// <summary>
         /// Графики(купол распада/функция смешения и аппроксимированная функция смешения)
         /// </summary>
-        DrawingClasses.CollapseGraph graph, graph_ap;
+        private DrawingClasses.CollapseGraph graph, graph_ap;
         /// <summary>
         /// Флаг: true - купол распада, false - функция смешения
         /// </summary>
-        bool f = true;
-        System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
+        private bool f = true;
+        private System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
 
         [DllImport("user32.dll")]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -43,6 +43,9 @@ namespace Activision_Mendeleyev_table
         private const int GWL_STYLE = -16;
         private const int WS_MAXIMIZEBOX = 0x10000;
 
+        /// <summary>
+        /// Инициализация элемента host
+        /// </summary>
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
             var hwnd = new System.Windows.Interop.WindowInteropHelper((Window)sender).Handle;
@@ -58,6 +61,8 @@ namespace Activision_Mendeleyev_table
         {
             InitializeComponent();
 
+            //Привязка горячей клавише Delete к методу DeleteSelectedRows
+            new HotKey(System.Windows.Input.Key.Delete, KeyModifier.None, DeleteSelectedRows);
             string[] elems = Parse(name);
             Composition A = MendeleevTable.Elems.Find(x => x.Name == elems[0]);
             Composition B = MendeleevTable.Elems.Find(x => x.Name == elems[1]);
@@ -123,6 +128,8 @@ namespace Activision_Mendeleyev_table
         {
             if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 e.Cancel = true;
+            else
+                DrawingClasses.CollapseGraph.ClearExperiment();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -137,8 +144,7 @@ namespace Activision_Mendeleyev_table
         private void diag_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            MessageBox.Show(sys.Tmax.ToString());
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;           
 
             try
             {
@@ -150,10 +156,12 @@ namespace Activision_Mendeleyev_table
                 {
                     if (sys_ap != null)
                     {
-                        MessageBox.Show(sys_ap.Tmax.ToString());
+                        //MessageBox.Show(sys_ap.Tmax.ToString());
                         graph_ap = new DrawingClasses.CollapseGraph(g, sys_ap, diag.Width);
                         graph_ap.DrawDH();
                     }
+                    //else
+                       // MessageBox.Show(sys.Tmax.ToString());
                     graph.DrawDH(false);
                 }
 
@@ -171,14 +179,13 @@ namespace Activision_Mendeleyev_table
 
         private void Points_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            float p;
             (e.EditingElement as TextBox).Text = (e.EditingElement as TextBox).Text.Replace(',', '.');
             if (dat[e.Row.GetIndex()].Capacity == 0)
             {
                 dat[e.Row.GetIndex()].Add(0);
                 dat[e.Row.GetIndex()].Add(0);
             }
-            if (!float.TryParse((e.EditingElement as TextBox).Text.Replace('.', ','), out p) || p < 0)
+            if (!float.TryParse((e.EditingElement as TextBox).Text.Replace('.', ','), out float p) || p < 0)
             {
                 MessageBox.Show("Координаты точки должны быть неотрицательным числом!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 (e.EditingElement as TextBox).Text = "";
@@ -202,8 +209,8 @@ namespace Activision_Mendeleyev_table
 
             f = true;
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
             
             diag.Refresh();
         }
@@ -239,11 +246,11 @@ namespace Activision_Mendeleyev_table
             IsExpPoints.IsEnabled = false;
 
             R.Value = Math.Min(sys_ap.R(0), sys_ap.R(1));
-            c.Value = sys_ap.getData()[0];
+            c.Value = sys_ap.GetData()[0];
             dE.Value = sys_ap.delEps;
 
-            setColor();
-            setBorders();          
+            SetColor();
+            SetBorders();          
 
             diag.Refresh();
         }
@@ -315,10 +322,33 @@ namespace Activision_Mendeleyev_table
 
         private void Points_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            DrawingClasses.CollapseGraph.clearExperiment();
+            DrawingClasses.CollapseGraph.ClearExperiment();
             for (int i = 0; i < dat.Count; i++)
-                DrawingClasses.CollapseGraph.addExperimentalPoint(dat[i][0], dat[i][1]);
+                DrawingClasses.CollapseGraph.AddExperimentalPoint(dat[i][0], dat[i][1]);
             diag.Refresh();
+        }
+
+        /// <summary>
+        /// Удаляет выделенные строки из таблицы
+        /// </summary>
+        /// <param name="hotKey">горячая клавиша для вызова метода</param>
+        private void DeleteSelectedRows(HotKey hotKey)
+        {
+            try
+            {
+                while (Points.SelectedItems.Count > 0)
+                {
+                    int selectedIndex = Points.SelectedIndex;
+                    DrawingClasses.CollapseGraph.RemoveSelectedPoint(selectedIndex);
+                    (Points.ItemsSource as List<List<double>>).RemoveAt(selectedIndex);
+                    Points.Items.Refresh();
+                }
+                diag.Refresh();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Невозможно удалить этот элемент!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -343,19 +373,19 @@ namespace Activision_Mendeleyev_table
         {
             f = false;
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
 
             if (sys != null)
-                Approximate(new double[] { Math.Min(sys.R(1), sys.R(0)), sys.delEps, sys.getData()[0] });
+                Approximate(new double[] { Math.Min(sys.R(1), sys.R(0)), sys.delEps, sys.GetData()[0] });
 
             diag.Refresh();
         }
 
         /// <summary>
-        /// Задает границы температуры(графика по оси Y)
+        /// Задает границы параметров
         /// </summary>
-        private void setBorders()
+        private void SetBorders()
         {
             int t = -1;
             if (!int.TryParse(DownT.Text, out t))
@@ -369,8 +399,7 @@ namespace Activision_Mendeleyev_table
 
             if (!f && sys_ap != null)
             {
-                double b = 0.01;
-                if (!double.TryParse(UpR.Text.Replace('.', ','), out b) && b <= 0)
+                if (!double.TryParse(UpR.Text.Replace('.', ','), out double b) && b <= 0)
                     MessageBox.Show("Неправильно установленно верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 R.Maximum = b;
 
@@ -404,7 +433,7 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Задает цвета отображения графиков
         /// </summary>
-        private void setColor()
+        private void SetColor()
         {
             byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(Experiment.SelectedColor.Value.B * (Math.Pow(256, 0)) +
                 Experiment.SelectedColor.Value.G * (Math.Pow(256, 1)) + Experiment.SelectedColor.Value.R * (Math.Pow(256, 2))));
@@ -421,11 +450,11 @@ namespace Activision_Mendeleyev_table
 
         private void c_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double[] dat = sys_ap.getData();
-            sys_ap.setData(c.Value, dat[1], dat[2], dat[3]);
+            double[] dat = sys_ap.GetData();
+            sys_ap.SetData(c.Value, dat[1], dat[2], dat[3]);
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
 
             diag.Refresh();
         }
@@ -434,8 +463,8 @@ namespace Activision_Mendeleyev_table
         {
             sys_ap.delEps = dE.Value; 
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
 
             diag.Refresh();
         }
@@ -444,8 +473,8 @@ namespace Activision_Mendeleyev_table
         {
             sys_ap.R_const = R.Value;
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
 
             diag.Refresh();
         }
@@ -480,8 +509,8 @@ namespace Activision_Mendeleyev_table
             Upc.IsEnabled = false;
             IsExpPoints.IsEnabled = true;
 
-            setColor();
-            setBorders();
+            SetColor();
+            SetBorders();
 
             diag.Refresh();
         }
@@ -495,7 +524,7 @@ namespace Activision_Mendeleyev_table
             List<HelperClasses.Point> Dots = new List<HelperClasses.Point>();
             foreach (List<double> point in dat)      
                 Dots.Add(new HelperClasses.Point(point[0], point[1]));
-            double[] data = sys.getData();
+            double[] data = sys.GetData();
 
             Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
             => 1000 * x * (1 - x) * ((332 * sys.A / PP[0] * PP[1] * PP[1] + PP[2] * data[1] * data[2] * data[3] * sys.zX *
@@ -508,7 +537,7 @@ namespace Activision_Mendeleyev_table
                 sys_ap = sys.Clone();
                 sys_ap.R_const = par_ap[0];
                 sys_ap.delEps = par_ap[1];
-                sys_ap.setData(par_ap[2], data[1], data[2], data[3]);
+                sys_ap.SetData(par_ap[2], data[1], data[2], data[3]);
             }
             catch (ArgumentNullException)
             {

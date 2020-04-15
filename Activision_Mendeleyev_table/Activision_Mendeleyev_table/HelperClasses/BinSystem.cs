@@ -14,7 +14,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <summary>
         /// Универсальная газовая постоянная
         /// </summary>
-        const double kN = 1.9844 * 0.001;
+        private const double kN = 1.9844 * 0.001;
         /// <summary>
         /// Константа Моделунга
         /// </summary>
@@ -38,33 +38,59 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <summary>
         /// Обозначение системы соединений
         /// </summary>
-        string sourceString;
+        private readonly string sourceString;
         /// <summary>
         /// Первый химический элемент
         /// </summary>
-        Composition elemA;
+        private Composition elemA;
         /// <summary>
         /// Второй химический элемент
         /// </summary>
-        Composition elemB;
+        private Composition elemB;
         /// <summary>
         /// Общий химический элемент
         /// </summary>
-        Composition elemX;
+        private Composition elemX;
 
-        //Прочие переменные, которые описываются позже
-        double c = -1;
-        double m = -1;
-        double n = -1;
-        double z = -1;
-        double r_1 = -1;
-        double r_2 = -1;
-        double r_3 = -1;
-        public double R_const = -1;
-        double deleps = -1;
-        
+        /// <summary>
+        /// Эмпирический параметр
+        /// </summary>
+        private double c = -1;
+        /// <summary>
+        /// Число структурных единиц
+        /// </summary>
+        private double m = -1;
+        /// <summary>
+        /// Координационное число
+        /// </summary>
+        private double n = -1;
+        /// <summary>
+        /// Формальный заряд
+        /// </summary>
+        private double z = -1;
         /// <summary>
         /// Ионный радиус первого элемента
+        /// </summary>
+        private double r_1 = -1;
+        /// <summary>
+        /// Ионный радиус второго элемента
+        /// </summary>
+        private double r_2 = -1;
+        /// <summary>
+        /// Ионный радиус общего элемента
+        /// </summary>
+        private double r_3 = -1;
+        /// <summary>
+        /// Межатомное расстояние
+        /// </summary>
+        public double R_const = -1;
+        /// <summary>
+        /// Разность степеней ионности
+        /// </summary>
+        private double deleps = -1;
+
+        /// <summary>
+        /// Возвращает ионный радиус первого элемента
         /// </summary>
         public double r1
         {
@@ -74,16 +100,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
  
                 return r_1;
-            }
-
-            set
-            {
-                r_1 = value;
-            }
+            }        
         }
 
         /// <summary>
-        /// Ионный радиус второго элемента
+        /// Возвращает ионный радиус второго элемента
         /// </summary>
         public double r2
         {
@@ -94,15 +115,10 @@ namespace Activision_Mendeleyev_table.HelperClasses
 
                 return r_2;
             }
-
-            set
-            {
-                r_2 = value;
-            }
         }
 
         /// <summary>
-        /// Ионный радиус общего элемента
+        /// Возвращает ионный радиус общего элемента
         /// </summary>
         public double r3
         {
@@ -112,11 +128,6 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
 
                 return r_3;
-            }
-
-            set
-            {
-                r_3 = value;
             }
         }
 
@@ -159,25 +170,25 @@ namespace Activision_Mendeleyev_table.HelperClasses
         }
 
         /// <summary>
-        /// Первый химический элемент
+        /// Обозначение первого химического элемента
         /// </summary>
-        public string elementA
+        public string ElementA
         {
             get { return elemA.Name; }
         }
 
         /// <summary>
-        /// Второй химический элемент
+        ///  Обозначение второго химического элемента
         /// </summary>
-        public string elementB
+        public string ElementB
         {
             get { return elemB.Name; }
         }
 
         /// <summary>
-        /// Общий химический элемент
+        ///  Обозначение общего химического элемента
         /// </summary>
-        public string elementX
+        public string ElementX
         {
             get { return elemX.Name; }
         }
@@ -203,8 +214,8 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <param name="c">эмпирический параметр</param>
         /// <param name="m">число структурных единиц</param>
         /// <param name="n">координационное число</param>
-        /// <param name="z">формальный заряд</param>  
-        public void setData(double c, double m, double n, double z)
+        /// <param name="z">формальный заряд</param>
+        public void SetData(double c, double m, double n, double z)
         {
             this.c = c;
             this.m = m;
@@ -216,7 +227,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// Позволяет получить параметры системы
         /// </summary>
         /// <returns>массив параметров</returns>
-        public double[] getData() { return new double[] { c, m, n, z, numA, numB, numX }; }
+        public double[] GetData() { return new double[] { c, m, n, z, numA, numB, numX }; }
 
         /// <summary>
         /// Энтропия смешения
@@ -320,17 +331,10 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// </summary>
         public double Hsm(double x1)
         {
-            double x2 = 1 - x1;
-
-            double first = x1 * x2 * (322 * A / R(x1)) * (delEps * delEps);
-
             if (zX == -1)
                 double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[2]).Second[numX], out zX);
-
-            double second = x1 * x2 * (c * m * n * z * zX *
-                ((delR / R(x1)) * (delR / R(x1))));
-
-            return first + second;
+            
+            return x1 * (1 - x1) * (322 * A / R(x1) * (delEps * delEps) + c * m * n * z * zX * (delR / R(x1) * delR / R(x1)));
         }
 
         /// <summary>
@@ -356,6 +360,10 @@ namespace Activision_Mendeleyev_table.HelperClasses
             }
         }
 
+        /// <summary>
+        /// Возвращает обозначение системы
+        /// </summary>
+        /// <returns>обозначение системы</returns>
         public override string ToString()
         {
             return sourceString;
@@ -369,7 +377,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             BinSystem toClone = new BinSystem(sourceString, new Composition(elemA.Name, elemA.DataTable, elemA.Properties), new Composition(elemB.Name, elemB.DataTable, elemB.Properties),
                 new Composition(elemX.Name, elemX.DataTable, elemX.Properties));
-            toClone.setData(c, m, n, z);
+            toClone.SetData(c, m, n, z);
             toClone.numA = numA;
             toClone.numB = numB;
             toClone.numX = numX;

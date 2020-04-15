@@ -6,28 +6,23 @@
     public class Point
     {
         /// <summary>
-        /// Координаты точки
-        /// </summary>
-        double x, y;
-
-        /// <summary>
         /// Конструктор точки
         /// </summary>
         /// <param name="x">координата X</param>
         /// <param name="y">координата Y</param>
         public Point(double x, double y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         /// <summary>
-        /// Возвращает значение координаты Y 
+        /// Свойство координаты Y 
         /// </summary>
-        public double Y { get { return y; } }
+        public double Y { get; set; }
         /// <summary>
-        /// Возвращает значение координаты X
+        /// Свойство координаты X
         /// </summary>
-        public double X { get { return x; } }
+        public double X { get; set; }
     }
 }

@@ -11,12 +11,12 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Строка-формула
         /// </summary>
-        public string formula { get; set; }
+        public string formula { get; private set; }
 
         /// <summary>
         /// Обозначение формулы
         /// </summary>
-        public string symbol { get; set; }
+        public string symbol { get; private set; }
 
         /// <summary>
         /// Конструктор, инициализирующий окно создания столбца-формулы
