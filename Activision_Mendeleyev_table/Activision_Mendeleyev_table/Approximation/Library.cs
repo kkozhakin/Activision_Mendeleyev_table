@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Activision_Mendeleyev_table.Approximation
 {
     /// <summary>
@@ -32,6 +33,23 @@ namespace Activision_Mendeleyev_table.Approximation
             double[] res = GradientMinimization(funN, Par, 1E-8, 1E-11, 10000);
 
             return res;
+        }
+
+        public static double ApproxiDots(List<Point> Exp, List<Point> Dots)
+        {
+            double min_sum = 0;
+
+            for (int i = 0; i < Exp.Count; i++)
+            {
+                double min = -1;
+                for (int j = 0; j < Dots.Count; j++)
+                    if (min == -1 || Math.Sqrt((Dots[j].X - Exp[i].X) * (Dots[j].X - Exp[i].X) + (Dots[j].Y - Exp[i].Y) * (Dots[j].Y - Exp[i].Y)) < min)
+                        min = Math.Sqrt((Dots[j].X - Exp[i].X) * (Dots[j].X - Exp[i].X) + (Dots[j].Y - Exp[i].Y) * (Dots[j].Y - Exp[i].Y));
+
+                min_sum += min;
+            }
+
+            return min_sum;
         }
 
         /// <summary>

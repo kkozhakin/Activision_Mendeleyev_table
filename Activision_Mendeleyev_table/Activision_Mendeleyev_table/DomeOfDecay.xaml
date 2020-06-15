@@ -43,6 +43,9 @@
                     <MenuItem Header="Нижняя температура"  >
                         <TextBox Name="DownT" Text="-1" Width="50" />
                     </MenuItem>
+                    <MenuItem Header="Критическая температура"  >
+                        <TextBox Name="Tkp" Text="-1" Width="50" />
+                    </MenuItem>
                     <MenuItem Header="Верхняя граница параметра Rmin" >
                         <TextBox Name="UpR" Text="10" Width="50" IsEnabled="False"/>
                     </MenuItem>
@@ -66,9 +69,11 @@
             </MenuItem>
             <MenuItem Header="Настройка данных" Click="DataSettings_Click" />
             <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
+            <MenuItem Name="Hsm" Header="Функция Hsm" Click="Approxi_Click" />
+            <MenuItem Name="Gsm"  Header="Функция Gsm" Click="Gsm_Click" />
         </Menu>
         <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <DataGrid Name="Points" Grid.Column="2" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
+        <DataGrid Name="Points" Grid.Column="2" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="False" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
         <Label Name="dE_label"  Content="delEps" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Margin="78,0" />
         <Label Name="R_label" Content="R" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
             <Label.RenderTransform>
@@ -156,28 +161,28 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="20"/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
-        <Button Name="Approxi" Grid.Column="0" Grid.Row="2" Content="Построить функцию Hsm и аппроксимировать" HorizontalAlignment="Left" VerticalAlignment="Center" Width="285" Height="34" RenderTransformOrigin="0.5,0.5" Click="Approxi_Click" Grid.ColumnSpan="2" Margin="0,8">
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform X="190"/>
+                    <TranslateTransform X="70"/>
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
         <Button Name="Back" Grid.Column="0" Grid.Row="2" Content="Назад" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="34" Click="Back_Click" Grid.ColumnSpan="2" Visibility="Hidden" />
-        <Button Name="Save" Grid.Column="1" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5" Margin="0,8">
+        <Button Name="Save" Grid.Column="2" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="10"/>
+                    <TranslateTransform X="-190"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Name="DelRows" Grid.Column="2" Grid.Row="2" Content="Удалить выделенные точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="200" Click="DeleteSelectedRows" RenderTransformOrigin="0.5,0.5" Margin="0,8">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-360"/>
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>

@@ -120,6 +120,9 @@
     <Compile Include="DataSettings.xaml.cs">
       <DependentUpon>DataSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="dG_Temp.xaml.cs">
+      <DependentUpon>dG_Temp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DomeOfDecay.xaml.cs">
       <DependentUpon>DomeOfDecay.xaml</DependentUpon>
     </Compile>
@@ -159,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="dG_Temp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

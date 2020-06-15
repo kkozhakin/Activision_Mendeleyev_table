@@ -98,9 +98,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
             {
                 if (r_1 == -1)
                     double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
- 
+
                 return r_1;
-            }        
+            }
         }
 
         /// <summary>
@@ -136,18 +136,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// </summary>
         public double R1
         {
-            get
-            {
-                if (r_1 == -1)
-                    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
-                if (r_3 == -1)
-                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
-
-                if (r_3 != -1 && r_1 != -1)
-                    return r_1 + r_3;
-                else
-                    return -1;
-            }
+            get { return R(0); }
         }
 
         /// <summary>
@@ -155,18 +144,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// </summary>
         public double R2
         {
-            get
-            {
-                if (r_2 == -1)
-                    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
-                if (r_3 == -1)
-                    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
-
-                if (r_3 != -1 && r_2 != -1)
-                    return r_2 + r_3;
-                else
-                    return -1;
-            }
+            get { return R(1); }
         }
 
         /// <summary>
@@ -236,7 +214,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             double x2 = 1 - x1;
             double Skon = (-1) * kN * (x1 * Math.Log(x1) + x2 * Math.Log(x2));
-            double Skol = 2.7252 * x1 * x2 * (delR / R1) * 0.001;
+            double Skol = 2.725 * x1 * x2 * (delR / R1) * 0.001;
 
             return Skon + Skol;
         }
@@ -246,20 +224,22 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// </summary>
         public double R(double x1)
         {
-            if (R_const != -1)
-                return R_const;
+            //if (R_const != -1)
+            //    return R_const;
 
-            if (r_2 == -1)
-                double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
-            if (r_3 == -1)
-                double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
-            if (r_1 == -1)
-                double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
+            //if (r_2 == -1)
+            //    double.TryParse(elemB.Properties.Find(x => x.First.Second == symbols[0]).Second[numB], out r_2);
+            //if (r_3 == -1)
+            //    double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[0]).Second[numX], out r_3);
+            //if (r_1 == -1)
+            //    double.TryParse(elemA.Properties.Find(x => x.First.Second == symbols[0]).Second[numA], out r_1);
 
-            if (r_1 != -1 && r_2 != -1 && r_3 != -1)
-                return x1 * r_1 + (1 - x1) * r_2 + r_3;
-            else
-                return -1;
+            //if (r_1 != -1 && r_2 != -1 && r_3 != -1)
+            //    return x1 * r_1 + (1 - x1) * r_2 + r_3;
+            //else
+            //    return -1;
+            //return x1 * 2.774 + (1 - x1) * 2.819;
+            return x1 * 2.054 + (1 - x1) * 1.966;
         }
 
         /// <summary>
@@ -269,10 +249,12 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             get
             {
-                if (r1 != -1 && r2 != -1)
-                    return Math.Abs(r_1 - r_2);
-                else
-                    return -1;
+                //if (r1 != -1 && r2 != -1)
+                //    return Math.Abs(r_1 - r_2);
+                //else
+                //    return -1;
+                //return 0.045;
+                return 0.088;
             }
         }
 
@@ -299,7 +281,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 default:
                     return 0;
             }
-      
+
             if (double.TryParse(temp.Properties.Find(x => x.First.Second == symbols[1]).Second[num], out double k)
                 && double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[1]).Second[numX], out double j))
                 return 1 - (z / n) * Math.Exp((k - j) * (k - j) * -0.25);
@@ -333,7 +315,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         {
             if (zX == -1)
                 double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[2]).Second[numX], out zX);
-            
+
             return x1 * (1 - x1) * (322 * A / R(x1) * (delEps * delEps) + c * m * n * z * zX * (delR / R(x1) * delR / R(x1)));
         }
 
@@ -356,7 +338,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 if (zX == -1)
                     double.TryParse(elemX.Properties.Find(x => x.First.Second == symbols[2]).Second[numX], out zX);
 
-                return (c * m * n * z * zX * ((delR / Math.Min(R1, R2)) * (delR / Math.Min(R1, R2)))) / (2 * kN);
+                return c * m * n * z * zX * (delR / Math.Min(R1, R2) * (delR / Math.Min(R1, R2))) / (2 * kN);
             }
         }
 

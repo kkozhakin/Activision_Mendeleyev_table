@@ -67,7 +67,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color Color
         {
             get { return pen.Color; }
-            set { pen = new Pen(value); }
+            set { pen = new Pen(value, 4); }
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color ExperimentColor
         {
             get { return penExp.Color; }
-            set { penExp = new Pen(value); }
+            set { penExp = new Pen(value, 4); }
         }
 
         /// <summary>
@@ -85,15 +85,16 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color ApproximationColor
         {
             get { return penApp.Color; }
-            set { penApp = new Pen(value); }
+            set { penApp = new Pen(value, 4); }
         }
 
         /// <summary>
         /// Рисует купол распада
         /// </summary>
-        public void DrawCollapse()
+        /// <param name="f">флаг: true - аппроксимация, false - теория</param>
+        public void DrawCollapse(bool f = false, string ratio = "")
         {
-            Collapse collapse = new Collapse(system);
+            Collapse collapse = new Collapse(system, ratio);
             UpTemp = UpTemp == -1 ? (int)system.Tmax : UpTemp;
             DownTemp = DownTemp == -1 ? (int)(0.20 * system.Tmax) : DownTemp;
 
@@ -117,9 +118,17 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 left[i] = new Point(x, y);
             }
 
-            g.DrawString("T, °C", new Font("X", 14), Brushes.Black, new Point(80, 0));
-            g.DrawLines(pen, right);
-            g.DrawLines(pen, left);
+            g.DrawString("T, °K", new Font("X", 14), Brushes.Black, new Point(80, 0));
+            if (f)
+            {
+                g.DrawLines(penApp, right);
+                g.DrawLines(penApp, left);
+            }
+            else
+            {
+                g.DrawLines(pen, right);
+                g.DrawLines(pen, left);
+            }         
         }
 
         /// <summary>
@@ -134,13 +143,44 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             Point[] dh = new Point[21];
             for (double i = 0; i < 1; i += 0.05)
                 dh[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Hsm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
-
-            dh[20] = new Point(80 + width, width - 40);
+            dh[20] = new Point(80 + width, width - 40 - (int)((system.Hsm(0.999999) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
             g.DrawString("ΔHcм, ккал/моль", new Font("X", 14), Brushes.Black, new Point(80, 0));
+
             if (f)
                 g.DrawLines(penApp, dh);
             else
                 g.DrawLines(pen, dh);
+
+        }
+
+        public void DrawDG(int tempD, int tempU, int tempInt)
+        {
+            DownTemp = DownTemp == -1 ? 0 : DownTemp;
+            UpTemp = UpTemp == -1 ? (int)(system.Hsm(0.5) * 1000) + 100 : UpTemp;
+
+            Point[] dh = new Point[21];
+            for (double i = 0; i < 1; i += 0.05)
+                dh[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Hsm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+            dh[20] = new Point(80 + width, width - 40 - (int)((system.Hsm(0.999999) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+            g.DrawLines(penApp, dh);
+
+            Point[] dg = new Point[21];
+            Point[] ds = new Point[21];
+
+            for (int t = tempD; t < tempU; t += tempInt)
+            {
+                for (double i = 0.00001; i < 1; i += 0.05)
+                {
+                    ds[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((-t * system.Ssm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                    dg[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Gsm(i, t) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                }
+                dg[20] = new Point(80 + width, width - 40 - (int)((system.Gsm(0.99999, t) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                ds[20] = new Point(80 + width, width - 40 - (int)((-t * system.Ssm(0.99999) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                g.DrawLines(pen, dg);
+                g.DrawLines(penExp, ds);
+            }
+
+            g.DrawString("ΔGcм, ккал/моль", new Font("X", 14), Brushes.Black, new Point(80, 0)); 
         }
 
         /// <summary>
@@ -156,13 +196,15 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
             for (double x = 0; x <= 1; x += 0.1)
             {
-                g.DrawString(x <= 0.5 ? x.ToString() : (1 - x).ToString(), new Font("X", 12), Brushes.Black, 
+                g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 
                     80 + (float)(width * x), width - 30);
                 g.DrawLine(Pens.Black, 80 + (int)(width * x), width - 45, 80 + (int)(width * x), width - 35);
             }
-            g.DrawString("0", new Font("X", 12), Brushes.Black, width + 30, width - 30);
+            g.DrawString("1", new Font("X", 12), Brushes.Black, width + 30, width - 30);
 
             double c = Math.Round((UpTemp - DownTemp) / 100.0);
+            if (c == 0)
+                c = 1;
             if (c < (UpTemp - DownTemp) / 100)
                 c = (c + 1) * 10;
             else
@@ -185,10 +227,8 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
             foreach (var item in experiment)
             {
-
                 int x = 80 + (int)(item.X * width);
                 int y = width - 40 - (int)((item.Y - DownTemp) / (UpTemp - DownTemp) * width);
-
                 y = y > width ? width : y;
 
                 if (item.X <= 0.5)
@@ -215,11 +255,11 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             {
                 foreach (var item in left)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 6, item.Y - 6, 12, 12);
+                    g.FillEllipse(penExp.Brush, item.X - 12, item.Y - 12, 24, 24);
                 }
                 foreach (var item in right)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 6, item.Y - 6, 12, 12);
+                    g.FillEllipse(penExp.Brush, item.X - 12, item.Y - 12, 24, 24);
                 }
             }
         }

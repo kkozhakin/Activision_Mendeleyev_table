@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Linq;
+using Point = Activision_Mendeleyev_table.HelperClasses.Point;
 
 namespace Activision_Mendeleyev_table
 {
@@ -30,9 +32,11 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private DrawingClasses.CollapseGraph graph, graph_ap;
         /// <summary>
-        /// Флаг: true - купол распада, false - функция смешения
+        /// Флаг: 0 - купол распада, 1 - функция смешения, 2 - свободная энергия Гиббса, 3 - оценка чувствительности
         /// </summary>
-        private bool f = true;
+        private byte f = 0;
+        private string ratio = "";
+
         private System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
 
         [DllImport("user32.dll")]
@@ -61,8 +65,6 @@ namespace Activision_Mendeleyev_table
         {
             InitializeComponent();
 
-            //Привязка горячей клавише Delete к методу DeleteSelectedRows
-            new HotKey(System.Windows.Input.Key.Delete, KeyModifier.None, DeleteSelectedRows);
             string[] elems = Parse(name);
             Composition A = MendeleevTable.Elems.Find(x => x.Name == elems[0]);
             Composition B = MendeleevTable.Elems.Find(x => x.Name == elems[1]);
@@ -91,6 +93,9 @@ namespace Activision_Mendeleyev_table
                 Binding = new Binding("[1]")
             });
             Points.ItemsSource = dat;
+
+            SetBorders();
+            SetColor();
         }
 
         /// <summary>
@@ -150,9 +155,19 @@ namespace Activision_Mendeleyev_table
             {
                 graph = new DrawingClasses.CollapseGraph(g, sys, diag.Width);
 
-                if (f)
+                if (f == 0)
+                {
                     graph.DrawCollapse();
-                else
+                    if (ratio != "")
+                    {                    
+                        graph_ap = new DrawingClasses.CollapseGraph(g, sys_ap, diag.Width);
+                        graph_ap.DrawCollapse(true, ratio);
+                    }
+                    MessageBox.Show(sys.Tmax.ToString());
+                    if (sys_ap != null)
+                        MessageBox.Show(sys_ap.Tmax.ToString());
+                }
+                else if (f == 1 || f == 3)
                 {
                     if (sys_ap != null)
                     {
@@ -161,8 +176,19 @@ namespace Activision_Mendeleyev_table
                         graph_ap.DrawDH();
                     }
                     //else
-                       // MessageBox.Show(sys.Tmax.ToString());
-                    graph.DrawDH(false);
+                    // MessageBox.Show(sys.Tmax.ToString());
+                    //graph.DrawDH(false);
+                }
+                else {
+                    dG_Temp win = new dG_Temp();
+                    win.ShowDialog();
+                    if (sys_ap != null)
+                    {
+                        graph_ap = new DrawingClasses.CollapseGraph(g, sys_ap, diag.Width);
+                        graph_ap.DrawDG(int.Parse(win.TempD.Text), int.Parse(win.TempU.Text), int.Parse(win.TempInt.Text));
+                    }
+                    else
+                        graph.DrawDG(int.Parse(win.TempD.Text), int.Parse(win.TempU.Text), int.Parse(win.TempInt.Text));
                 }
 
                 graph.DrawAxes();
@@ -203,15 +229,41 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void Build_Click(object sender, RoutedEventArgs e)
         {
-            if (!f && sys_ap != null)
-                if (MessageBox.Show("Использовать при построении купола новые значения параметров?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    sys = sys_ap.Clone();
+            if (f == 1 && sys_ap != null) // f == 3?
+                sys = sys_ap.Clone();
 
-            f = true;
+            f = 0;
 
             SetColor();
             SetBorders();
-            
+
+            int t = int.Parse(Tkp.Text);
+
+            //if (dat.Count > 0 && t != -1)
+              //  ratio = Approximate_T(t);
+
+            if (sys_ap == null)
+                sys_ap = sys.Clone();
+
+            double sys_rat = double.Parse(DrawingClasses.Collapse.GetRatio(sys.delR / sys.R_const == -1 ? Math.Min(sys.R1, sys.R2) : sys.R_const));
+            ratio = sys_rat.ToString();
+
+            if (t != -1)
+            {
+                
+                if (ratio != "")
+                {
+                    if (sys_rat > double.Parse(ratio))
+                        sys_ap.R_const = sys.delR / (sys_rat - 0.0251);
+                    else if (sys_rat < double.Parse(ratio))
+                        sys_ap.R_const = sys.delR / (sys_rat + 0.0251);
+
+                    //MessageBox.Show(sys_ap.R_const.ToString());
+                    double[] dat = sys_ap.GetData();
+                    sys_ap.SetData(t / (dat[1] * dat[2] * dat[3] * sys_ap.zX * (sys.delR / Math.Min(sys_ap.R(0), sys_ap.R(1))) * (sys.delR / Math.Min(sys_ap.R(0), sys_ap.R(1)))) * 2 * 1.9844 * 0.001, dat[1], dat[2], dat[3]);
+                    MessageBox.Show((t / (dat[1] * dat[2] * dat[3] * sys_ap.zX * (sys.delR / Math.Min(sys_ap.R(0), sys_ap.R(1))) * (sys.delR / Math.Min(sys_ap.R(0), sys_ap.R(1)))) * 2 * 1.9844 * 0.001).ToString());
+                }
+            }
             diag.Refresh();
         }
 
@@ -220,11 +272,11 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void Sensitivity_Click(object sender, RoutedEventArgs e)
         {
-            f = false;
+            f = 3;
             sys_ap = sys.Clone();
             Points.Visibility = Visibility.Hidden;
             Build.Visibility = Visibility.Hidden;
-            Approxi.Visibility = Visibility.Hidden;
+            DelRows.Visibility = Visibility.Hidden;
             Save.Visibility = Visibility.Hidden;
             Load.Visibility = Visibility.Hidden;
             R.Visibility = Visibility.Visible;
@@ -237,12 +289,15 @@ namespace Activision_Mendeleyev_table
             dE_text.Visibility = Visibility.Visible;
             c_text.Visibility = Visibility.Visible;
             Back.Visibility = Visibility.Visible;
+
             DownR.IsEnabled = true;
             UpdE.IsEnabled = true;
             Downc.IsEnabled = true;
             UpR.IsEnabled = true;
             DowndE.IsEnabled = true;
             Upc.IsEnabled = true;
+            Hsm.IsEnabled = false;
+            Gsm.IsEnabled = false;
             IsExpPoints.IsEnabled = false;
 
             R.Value = Math.Min(sys_ap.R(0), sys_ap.R(1));
@@ -304,7 +359,7 @@ namespace Activision_Mendeleyev_table
             {
                 MessageBox.Show("Неверный формат файла!");
             }
-            Points.Items.Refresh();
+            Points.Items.Refresh();//to do Refresh не разрешено во время выполнения операции AddNew или EditItem.
             Points_RowEditEnding(this, new DataGridRowEditEndingEventArgs(new DataGridRow(), DataGridEditAction.Commit));
         }
 
@@ -331,8 +386,7 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Удаляет выделенные строки из таблицы
         /// </summary>
-        /// <param name="hotKey">горячая клавиша для вызова метода</param>
-        private void DeleteSelectedRows(HotKey hotKey)
+        private void DeleteSelectedRows(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -343,12 +397,12 @@ namespace Activision_Mendeleyev_table
                     (Points.ItemsSource as List<List<double>>).RemoveAt(selectedIndex);
                     Points.Items.Refresh();
                 }
-                diag.Refresh();
             }
             catch (Exception)
             {
-                MessageBox.Show("Невозможно удалить этот элемент!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Невозможно удалить этот элемент!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);      
             }
+            diag.Refresh();
         }
 
         /// <summary>
@@ -371,13 +425,23 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void Approxi_Click(object sender, RoutedEventArgs e)
         {
-            f = false;
+            f = 1;
 
             SetColor();
             SetBorders();
 
             if (sys != null)
-                Approximate(new double[] { Math.Min(sys.R(1), sys.R(0)), sys.delEps, sys.GetData()[0] });
+                Approximate_dH(new double[] { Math.Min(sys.R1, sys.R2), sys.delEps, sys.GetData()[0] });
+
+            diag.Refresh();
+        }
+
+        private void Gsm_Click(object sender, RoutedEventArgs e)
+        {
+            f = 2;
+
+            SetColor();
+            SetBorders();
 
             diag.Refresh();
         }
@@ -385,47 +449,51 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Задает границы параметров
         /// </summary>
-        private void SetBorders()
+        private void SetBorders() // to do throw
         {
             int t = -1;
             if (!int.TryParse(DownT.Text, out t))
-                MessageBox.Show("Неправильно установленно нижняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неправильно установленна нижняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             DrawingClasses.CollapseGraph.DownTemp = t;
 
             t = -1;
             if (!int.TryParse(UpT.Text, out t))
-                MessageBox.Show("Неправильно установленно верхняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неправильно установленна верхняя граница температуры!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             DrawingClasses.CollapseGraph.UpTemp = t;
 
-            if (!f && sys_ap != null)
+            t = -1;
+            if (!int.TryParse(Tkp.Text, out t))
+                MessageBox.Show("Неправильно установленна критическая температура!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            if (f == 3 && sys_ap != null)
             {
                 if (!double.TryParse(UpR.Text.Replace('.', ','), out double b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна верхняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 R.Maximum = b;
 
                 b = 0.01;
                 if (!double.TryParse(DownR.Text.Replace('.', ','), out b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно нижняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна нижняя граница параметра R!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 R.Minimum = b;
 
                 b = 0.01;
                 if (!double.TryParse(Upc.Text.Replace('.', ','), out b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно верхняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна верхняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 c.Maximum = b;
 
                 b = 0.01;
                 if (!double.TryParse(Downc.Text.Replace('.', ','), out b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно нижняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна нижняя граница параметра c!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 c.Minimum = b;
 
                 b = 0.01;
                 if (!double.TryParse(UpdE.Text.Replace('.', ','), out b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно верхняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна верхняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 dE.Maximum = b;
 
                 b = 0.01;
                 if (!double.TryParse(DowndE.Text.Replace('.', ','), out b) && b <= 0)
-                    MessageBox.Show("Неправильно установленно нижняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неправильно установленна нижняя граница параметра dE!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 dE.Minimum = b;
             }
         }
@@ -484,13 +552,13 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            f = true;
-            sys_ap = null;
+            f = 1;
+            //sys_ap = null;
             Points.Visibility = Visibility.Visible;
             Build.Visibility = Visibility.Visible;
-            Approxi.Visibility = Visibility.Visible;
             Save.Visibility = Visibility.Visible;
             Load.Visibility = Visibility.Visible;
+            DelRows.Visibility = Visibility.Visible;
             R.Visibility = Visibility.Hidden;
             dE.Visibility = Visibility.Hidden;
             c.Visibility = Visibility.Hidden;
@@ -507,6 +575,8 @@ namespace Activision_Mendeleyev_table
             UpR.IsEnabled = false;
             DowndE.IsEnabled = false;
             Upc.IsEnabled = false;
+            Hsm.IsEnabled = true;
+            Gsm.IsEnabled = true;
             IsExpPoints.IsEnabled = true;
 
             SetColor();
@@ -516,19 +586,19 @@ namespace Activision_Mendeleyev_table
         }
 
         /// <summary>
-        /// Аппроксимация функции
+        /// Аппроксимация функции dH
         /// </summary>
         /// <param name="par">набор изменяемых параметров</param>
-        private void Approximate(double[] par)
+        private void Approximate_dH(double[] par)
         {
-            List<HelperClasses.Point> Dots = new List<HelperClasses.Point>();
+            List<Point> Dots = new List<Point>();
             foreach (List<double> point in dat)      
-                Dots.Add(new HelperClasses.Point(point[0], point[1]));
+                Dots.Add(new Point(point[0], point[1]));
             double[] data = sys.GetData();
 
             Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
             => 1000 * x * (1 - x) * ((332 * sys.A / PP[0] * PP[1] * PP[1] + PP[2] * data[1] * data[2] * data[3] * sys.zX *
-            (Math.Abs(sys.r1 - sys.r2) / PP[0] * Math.Abs(sys.r1 - sys.r2) / PP[0]))));
+            (sys.delR / PP[0] * sys.delR) / PP[0])));
 
             try
             {
@@ -543,6 +613,52 @@ namespace Activision_Mendeleyev_table
             {
                 MessageBox.Show("Точки не заданы! Аппроксимация невозможна!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        /// <summary>
+        /// Аппроксимация купола распада
+        /// </summary>
+        /// <param name="t">критическая температура</param>
+        private string Approximate_T(int t)
+        {
+            System.Windows.Resources.StreamResourceInfo ri = Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
+            Stream data = ri.Stream;
+
+            List<Point> ExpDots = new List<Point>();
+            List<Point> Dots = new List<Point>();
+            double min = -1;
+            string r_min = "";
+            foreach (List<double> point in dat)
+                ExpDots.Add(new Point(point[0], point[1]));
+           
+            if (ExpDots.Count > 0)
+            {
+                System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(data);
+                foreach (string r in new string[7] { "0,00", "0,05", "0,10", "0,15", "0,20", "0,25", "0,30" })
+                {
+                    string[] x1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x1").Value.Split(';');
+                    string[] x2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x2").Value.Split(';');
+                    string[] y1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
+                    string[] y2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
+
+                    Dots.Clear();
+                    for (int i = 0; i < x1values.Length; i++)
+                        Dots.Add(new Point(double.Parse(x1values[i]), double.Parse(y1values[i]) * t));
+
+                    for (int i = 0; i < x2values.Length; i++)
+                        Dots.Add(new Point(double.Parse(x2values[i]), double.Parse(y2values[i]) * t));
+
+                    double s = Library.ApproxiDots(ExpDots, Dots);
+
+                    if (min == -1 || s < min)
+                    {
+                        min = s;
+                        r_min = r;
+                    }
+                }
+            }
+
+            return r_min;
         }
     }
 }

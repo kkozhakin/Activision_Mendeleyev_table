@@ -85,7 +85,8 @@ namespace Activision_Mendeleyev_table.HelperClasses
                 ComponentDispatcher.ThreadFilterMessage += new ThreadMessageEventHandler(ComponentDispatcherThreadFilterMessage);
             }
 
-            _dictHotKeyToCallBackProc.Add(Id, this);
+            if (!_dictHotKeyToCallBackProc.ContainsKey(Id))
+                _dictHotKeyToCallBackProc.Add(Id, this);
 
             Debug.Print(result.ToString() + ", " + Id + ", " + virtualKeyCode);
             return result;
