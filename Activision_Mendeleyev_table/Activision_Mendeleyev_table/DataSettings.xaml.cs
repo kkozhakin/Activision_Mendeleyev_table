@@ -26,14 +26,9 @@ namespace Activision_Mendeleyev_table
                 elemA.Text = sys.ElementA;
                 elemB.Text = sys.ElementB;
                 elemX.Text = sys.ElementX;
-                double[] par = sys.GetData();
-                numX.Text = sys.numX.ToString();
-                numB.Text = sys.numB.ToString();
-                numA.Text = sys.numA.ToString();
-                z.Text = par[3].ToString();
-                c.Text = par[0].ToString();
-                m.Text = par[1].ToString();
-                n.Text = par[2].ToString();
+                z.Text = sys.z.ToString();
+                m.Text = sys.m.ToString();
+                n.Text = sys.n.ToString();
                 _A.Text = sys.A.ToString();
             }
         }
@@ -62,11 +57,7 @@ namespace Activision_Mendeleyev_table
                 MessageBox.Show("Неверные заданы названия элементов входящих в систему! Измените их в меню настроек!", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             else
-            {
-                sys = new BinSystem(elemA.Text + elemX.Text + '-' + elemB.Text + elemX.Text, A, B, X);
-                sys.symbols[0] = r.Text;
-                sys.symbols[1] = x.Text;
-                sys.symbols[2] = FZ.Text;
+            {                
                 _A.Text = _A.Text.Replace('.', ',');
                 double q = -1;
                 int w = -1;
@@ -80,19 +71,20 @@ namespace Activision_Mendeleyev_table
                     MessageBox.Show("Поле numX - целое неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else if (!double.TryParse(m.Text, out q) || q < 0)
                     MessageBox.Show("Поле m - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                else if (!double.TryParse(c.Text, out q) || q < 0)
-                    MessageBox.Show("Поле c - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                else if (!double.TryParse(n.Text, out q) || q < 0)
+               else if (!double.TryParse(n.Text, out q) || q < 0)
                     MessageBox.Show("Поле n - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else if (!double.TryParse(_A.Text, out q) || q < 0)
                     MessageBox.Show("Поле A - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
                 {
-                    sys.SetData(double.Parse(c.Text), double.Parse(m.Text), double.Parse(n.Text), double.Parse(z.Text));
-                    sys.numA = int.Parse(numA.Text);
-                    sys.numB = int.Parse(numB.Text);
-                    sys.numX = int.Parse(numX.Text);
-                    sys.A = double.Parse(_A.Text);
+                    double.TryParse(X.Properties.Find(x => x.First.Second == FZ.Text).Second[int.Parse(numX.Text)], out q); //try
+                    sys = new BinSystem(elemA.Text + elemX.Text + '-' + elemB.Text + elemX.Text, A, B, X, double.Parse(n.Text), double.Parse(_A.Text), double.Parse(m.Text), double.Parse(z.Text), q);
+                    double.TryParse(A.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numA.Text)], out sys.x_1); 
+                    double.TryParse(B.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numB.Text)], out sys.x_2);
+                    double.TryParse(X.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numX.Text)], out sys.x_3);
+                    double.TryParse(B.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numB.Text)], out sys.r_2);
+                    double.TryParse(X.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numX.Text)], out sys.r_3);
+                    double.TryParse(A.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numA.Text)], out sys.r_1);
                     this.Close();
                 }
             }

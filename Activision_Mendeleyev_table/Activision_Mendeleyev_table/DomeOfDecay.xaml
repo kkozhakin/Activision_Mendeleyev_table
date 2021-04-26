@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:Activision_Mendeleyev_table.HelperClasses"
         mc:Ignorable="d"
         Icon="icon.jpeg"
-        Title="Купол распада" Height="465" Width="557" WindowStartupLocation="CenterScreen" MinHeight="765" MinWidth="857" Closing="Window_Closing"  SizeChanged="Window_SizeChanged" SourceInitialized="Window_SourceInitialized">
+        Title="Фазовые диаграммы" Height="465" Width="557" WindowStartupLocation="CenterScreen" MinHeight="765" MinWidth="857" Closing="Window_Closing"  SizeChanged="Window_SizeChanged" SourceInitialized="Window_SourceInitialized">
     <Window.Resources>
         <local:RoundConverter x:Key="RoundConverter"></local:RoundConverter>
     </Window.Resources>
@@ -24,6 +24,11 @@
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Настройка данных" Click="DataSettings_Click" />
+                <MenuItem Header="Сохранить график в отчет" Click="SaveImg_Click"/>
+                <MenuItem Header="Сформировать отчет" Click="CreateReport_Click"/>
+            </MenuItem>
             <MenuItem Header="Графическое меню">
                 <MenuItem Header="Настройка цвета">
                     <MenuItem  Header="Теория">
@@ -37,65 +42,48 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Настройка границ">
-                    <MenuItem Header="Верхняя температура" >
-                        <TextBox Name="UpT" Text="-1" Width="50" />
+                    <MenuItem Header="Верхняя граница температуры" >
+                        <TextBox Name="UpT" Width="50" LostFocus="Borders_Changed" />
                     </MenuItem>
-                    <MenuItem Header="Нижняя температура"  >
-                        <TextBox Name="DownT" Text="-1" Width="50" />
+                    <MenuItem Header="Нижняя граница температуры" >
+                        <TextBox Name="DownT" Width="50" LostFocus="Borders_Changed" />
                     </MenuItem>
                     <MenuItem Header="Критическая температура"  >
-                        <TextBox Name="Tkp" Text="-1" Width="50" />
-                    </MenuItem>
-                    <MenuItem Header="Верхняя граница параметра Rmin" >
-                        <TextBox Name="UpR" Text="10" Width="50" IsEnabled="False"/>
-                    </MenuItem>
-                    <MenuItem Header="Нижняя граница параметра Rmin"  >
-                        <TextBox Name="DownR" Text="0.01" Width="50" IsEnabled="False" />
-                    </MenuItem>
-                    <MenuItem Header="Верхняя граница параметра delEps" >
-                        <TextBox Name="UpdE" Text="1" Width="50" IsEnabled="False" />
-                    </MenuItem>
-                    <MenuItem Header="Нижняя граница параметра delEps"  >
-                        <TextBox Name="DowndE" Text="0.01" Width="50" IsEnabled="False" />
-                    </MenuItem>
-                    <MenuItem Header="Верхняя граница параметра c" >
-                        <TextBox Name="Upc" Text="100" Width="50" IsEnabled="False" />
-                    </MenuItem>
-                    <MenuItem Header="Нижняя граница параметра c"  >
-                        <TextBox Name="Downc" Text="0.01" Width="50" IsEnabled="False" />
+                        <TextBox Name="Tkp" Width="50" LostFocus="Borders_Changed" />
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Name="IsExpPoints" Header="Эксперимент точками" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked" />
             </MenuItem>
-            <MenuItem Header="Настройка данных" Click="DataSettings_Click" />
-            <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
-            <MenuItem Name="Hsm" Header="Функция Hsm" Click="Approxi_Click" />
-            <MenuItem Name="Gsm"  Header="Функция Gsm" Click="Gsm_Click" />
+            <MenuItem Header="Графики">
+                <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
+                <MenuItem Name="Hsm" Header="Функция Hsm" Click="Approxi_Click" />
+                <MenuItem Name="Gsm"  Header="Функция Gsm" Click="Gsm_Click" />
+            </MenuItem>
         </Menu>
         <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <DataGrid Name="Points" Grid.Column="2" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="False" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding"/>
-        <Label Name="dE_label"  Content="delEps" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Margin="78,0" />
-        <Label Name="R_label" Content="R" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+        <DataGrid Name="Points" Grid.Column="2" Grid.Row="1" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserAddRows="True" CanUserDeleteRows="False" ColumnWidth="*" CellEditEnding="Points_CellEditEnding" RowEditEnding="Points_RowEditEnding" VerticalAlignment="Top" Height="350"/>
+        <Label Name="x2_label"  Content="x2" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Margin="78,0" />
+        <Label Name="x3_label" Content="x3" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="30"/>
+                    <TranslateTransform X="-40"/>
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
-        <Label Name="c_label" Content="c" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+        <Label Name="x1_label" Content="x1" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="-20"/>
+                    <TranslateTransform X="35"/>
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
-        <TextBox Name="dE_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=dE, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Height="20" Width="50" IsReadOnly="True" RenderTransformOrigin="0.5,0.5">
+        <TextBox Name="x2_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=x2, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
             <TextBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -105,7 +93,7 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <TextBox Name="R_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=R, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5" IsReadOnly="True">
+        <TextBox Name="x1_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=x1, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
             <TextBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -115,7 +103,17 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <TextBox Name="c_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=c, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5" IsReadOnly="True">
+        <Slider Name="x1" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="x1_ValueChanged">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="35" Y="70"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <TextBox Name="x3_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=x3, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
             <TextBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -125,17 +123,17 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <Slider Name="R" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="R_ValueChanged">
+        <Slider Name="x3" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="x3_ValueChanged">
             <Slider.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="20" Y="70"/>
+                    <TranslateTransform X="-40" Y="70"/>
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
-        <Slider Name="dE" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="dE_ValueChanged">
+        <Slider Name="x2" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="x2_ValueChanged">
             <Slider.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -145,16 +143,116 @@
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
-        <Slider Name="c" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top" Height="600" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="c_ValueChanged">
+        <Label Name="r2_label" Content="r2" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Margin="78,0" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="335"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="r1_label" Content="r1" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="335" X="35"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="r3_label" Content="r3" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="335" X="-40"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <TextBox Name="r2_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=r2, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Top" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="370"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <TextBox Name="r1_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=r1, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="20" Y="370"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <TextBox Name="r3_text" Grid.Column="2" Grid.Row="1" Text="{Binding ElementName=r3, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RoundConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Hidden" Height="20" Width="50" RenderTransformOrigin="0.5,0.5">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-20" Y="370"/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <Slider Name="r1" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="r1_ValueChanged">
             <Slider.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="-20" Y="70"/>
+                    <TranslateTransform X="35" Y="405"/>
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>
+        <Slider Name="r2" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="r2_ValueChanged">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="405"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Slider Name="r3" Grid.Column="2" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top" Height="250" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" ValueChanged="r3_ValueChanged">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-40" Y="405"/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
+        <Label Name="Tcr_label" Content="Tкр = " Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-160" X="20"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Name="Tcr_new_label" Content="Tкр* = " Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" >
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-120" X="20"/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
         <Button Name="Build" Grid.Column="0" Grid.Row="2" Content="Построить купол" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="34" RenderTransformOrigin="0.5,0.5" Click="Build_Click" Grid.ColumnSpan="2" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>

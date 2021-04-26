@@ -24,10 +24,9 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// Получает точки для фазовой диаграммы
         /// </summary>
         /// <param name="system">система соединений</param>
-        public Collapse(BinSystem system, string r)
+        public Collapse(BinSystem system)
         {
-            if (r == "")
-                r = GetRatio(system.delR / Math.Min(system.R1, system.R2));
+            string r = GetRatio(system.delR / Math.Min(system.R(1), system.R(0)));
 
             System.Windows.Resources.StreamResourceInfo ri = System.Windows.Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
             System.IO.Stream data = ri.Stream;
@@ -38,14 +37,28 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             string[] y1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
             string[] y2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
 
-            right = new Point[x1values.Length];
-            left = new Point[x2values.Length];
+            if (system.R(1) >= system.R(0))
+            {
+                right = new Point[x1values.Length];
+                left = new Point[x2values.Length];
 
-            for (int i = 0; i < x1values.Length; i++)
-                right[i] = new Point(double.Parse(x1values[i]), double.Parse(y1values[i]));
+                for (int i = 0; i < x1values.Length; i++)
+                    right[i] = new Point(double.Parse(x1values[i]), double.Parse(y1values[i]));
 
-            for (int i = 0; i < x2values.Length; i++)
-                left[i] = new Point(double.Parse(x2values[i]), double.Parse(y2values[i]));
+                for (int i = 0; i < x2values.Length; i++)
+                    left[i] = new Point(double.Parse(x2values[i]), double.Parse(y2values[i]));
+            }
+            else
+            {
+                left = new Point[x1values.Length];
+                right = new Point[x2values.Length];
+
+                for (int i = 0; i < x1values.Length; i++)
+                    left[i] = new Point(double.Parse(x1values[i]), double.Parse(y1values[i]));
+
+                for (int i = 0; i < x2values.Length; i++)
+                    right[i] = new Point(double.Parse(x2values[i]), double.Parse(y2values[i]));
+            }
         }
 
         /// <summary>

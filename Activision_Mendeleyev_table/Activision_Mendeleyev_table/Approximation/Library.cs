@@ -10,41 +10,60 @@ namespace Activision_Mendeleyev_table.Approximation
     /// </summary>
     public class Library
     {
+        //static double max = 0;
+        //static double maxp = 0;
+        //static double min = 1000000;
+        //static double minp = 1000000;
+
         /// <summary>
-        /// Метод аппроксимации набора точек заданной функцией (Function)
+        /// Метод аппроксимации набора точек заданной функцией
         /// </summary>
         /// <param name="tab">лист точек</param>
         /// <param name="Function">аппроксимирующая функция</param>
         /// <param name="Par">начальное значение параметров функции</param>
         /// <param name="ApproxiAccuracy">метод оценки точности аппроксимации</param>
         /// <returns>новый нобор параметров функции</returns>
-        public static double[] AproxiTab(List<Point> tab, Func<double, double[], double> Function, double[] Par, 
-            Func<List<Point>, Func<double, double[], double>, double[], double> ApproxiAccuracy)
+        public static double[] AproxiTab(List<Point> tab, Func<double, double[], double> Function, double[] Par,
+            List<double> Par_lims, Func<List<Point>, Func<double, double[], double>, double[], double> ApproxiAccuracy, Func<List<double>, double[], double[], double> Penalty)
         {
-            // Локальный метод
+
             double funN(double[] par)
             {
                 if (tab.Count == 0)
                     throw new ArgumentNullException("", new Exception("MyException"));
-                double result = ApproxiAccuracy(tab, Function, par);
-                return result;
+
+                //if (max < ApproxiAccuracy(tab, Function, par))
+                //    max = ApproxiAccuracy(tab, Function, par);
+                //if (maxp < Penalty(Par_lims, Par, par))
+                //    maxp = Penalty(Par_lims, Par, par);
+                //if (min > ApproxiAccuracy(tab, Function, par))
+                //    min = ApproxiAccuracy(tab, Function, par);
+                //if (minp > Penalty(Par_lims, Par, par))
+                //    minp = Penalty(Par_lims, Par, par);
+                return ApproxiAccuracy(tab, Function, par) + Penalty(Par_lims, Par, par);
             }
 
-            double[] res = GradientMinimization(funN, Par, 1E-8, 1E-11, 10000);
-
-            return res;
+            double[] a = GradientMinimization(funN, Par, 1E-8, 1E-11, 10000);
+            //System.Windows.MessageBox.Show(max + " \n" + maxp + " \n" + min + " \n"+minp);
+            return a;
         }
 
-        public static double ApproxiDots(List<Point> Exp, List<Point> Dots)
+        /// <summary>
+        /// Метод нахождения расстояния между одним набором точек и другим
+        /// </summary>
+        /// <param name="Dots_1">первый набор точек</param>
+        /// <param name="Dots_2">второй набор точек</param>
+        /// <returns>расстояние</returns>
+        public static double ApproxiDots(List<Point> Dots_1, List<Point> Dots_2)
         {
             double min_sum = 0;
 
-            for (int i = 0; i < Exp.Count; i++)
+            for (int i = 0; i < Dots_1.Count; i++)
             {
                 double min = -1;
-                for (int j = 0; j < Dots.Count; j++)
-                    if (min == -1 || Math.Sqrt((Dots[j].X - Exp[i].X) * (Dots[j].X - Exp[i].X) + (Dots[j].Y - Exp[i].Y) * (Dots[j].Y - Exp[i].Y)) < min)
-                        min = Math.Sqrt((Dots[j].X - Exp[i].X) * (Dots[j].X - Exp[i].X) + (Dots[j].Y - Exp[i].Y) * (Dots[j].Y - Exp[i].Y));
+                for (int j = 0; j < Dots_2.Count; j++)
+                    if (min == -1 || Math.Sqrt((Dots_2[j].X - Dots_1[i].X) * (Dots_2[j].X - Dots_1[i].X) + (Dots_2[j].Y - Dots_1[i].Y) * (Dots_2[j].Y - Dots_1[i].Y)) < min)
+                        min = Math.Sqrt((Dots_2[j].X - Dots_1[i].X) * (Dots_2[j].X - Dots_1[i].X) + (Dots_2[j].Y - Dots_1[i].Y) * (Dots_2[j].Y - Dots_1[i].Y));
 
                 min_sum += min;
             }
@@ -57,7 +76,7 @@ namespace Activision_Mendeleyev_table.Approximation
         /// </summary>
         /// <param name="funN">исследуемая функция</param>
         /// <param name="X0">вектор параметров - иследуемая точка</param>
-        /// <param name="del">относительная ??вариация??? каждого параметра</param>
+        /// <param name="del">относительная вариация каждого параметра</param>
         /// <returns>вектор перемещения вдоль градиента</returns>
         public static double[] Gradient(Func<double[], double> funN, double[] X0, double del = 0.001)
         //double del=0.00001)
@@ -128,7 +147,7 @@ namespace Activision_Mendeleyev_table.Approximation
             for (i = 0; i < NC; i++)
             {
                 P1[i] = P0[i] + H * S[i];
-                P2[i] = P0[i] + 2.0 * H * S[i];
+                P2[i] = P0[i] + 2 * H * S[i];
             }
 
             Y1 = funN(P1);
@@ -249,7 +268,7 @@ namespace Activision_Mendeleyev_table.Approximation
                 } 
             }
             while (iter < Max & Math.Abs(F1 - F2) > Epsilon & deltaX > Delta);
-            double deltaF = (F1 - F2);
+
             return Q2;
         }
     }

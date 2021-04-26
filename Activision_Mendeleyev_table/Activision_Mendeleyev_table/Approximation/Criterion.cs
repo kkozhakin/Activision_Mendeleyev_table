@@ -30,7 +30,7 @@ namespace Activision_Mendeleyev_table.Approximation
         }
 
         /// <summary>
-        /// Критерий (sum|f-y|^2)/N оценки отклонения F(x) от точек
+        /// Критерий sum((f-y)^2)/N оценки отклонения F(x) от точек
         /// </summary>
         /// <param name="tab">лист точек</param>
         /// <param name="F">функция</param>
@@ -42,10 +42,29 @@ namespace Activision_Mendeleyev_table.Approximation
             foreach (Point mp in tab)
             {
                 f = F(mp.X, par);
-                sum += Math.Pow((f - mp.Y), 2);
+                sum += Math.Pow(f - mp.Y, 2);
             }
 
             return Math.Sqrt(sum / tab.Count);
+        }
+
+        /// <summary>
+        /// Штрафная функция
+        /// </summary>
+        /// <param name="par_lims">допустимая погрешность параметров</param>
+        /// <param name="par_0">начальное значение параметров функции</param>
+        /// <param name="par_new">текущее значение параметров функции</param>
+        /// <returns>значение штрафа</returns>
+        public static double PenaltyF(List<double> par_lims, double[] par_0, double[] par_new)
+        {
+            double sum = 0;
+            for (int i = 0; i < par_lims.Count; i++)
+                if (Math.Abs(par_0[i] - par_new[i]) > par_lims[i] || par_lims[i] == 0)
+                    sum += 1000;
+                else
+                    sum += Math.Abs(par_0[i] - par_new[i]) / par_lims[i];
+
+            return sum * 100;
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color Color
         {
             get { return pen.Color; }
-            set { pen = new Pen(value, 4); }
+            set { pen = new Pen(value, 3); }
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color ExperimentColor
         {
             get { return penExp.Color; }
-            set { penExp = new Pen(value, 4); }
+            set { penExp = new Pen(value, 3); }
         }
 
         /// <summary>
@@ -85,17 +85,17 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         public static Color ApproximationColor
         {
             get { return penApp.Color; }
-            set { penApp = new Pen(value, 4); }
+            set { penApp = new Pen(value, 3); }
         }
 
         /// <summary>
         /// Рисует купол распада
         /// </summary>
         /// <param name="f">флаг: true - аппроксимация, false - теория</param>
-        public void DrawCollapse(bool f = false, string ratio = "")
+        public void DrawCollapse(bool f = false)
         {
-            Collapse collapse = new Collapse(system, ratio);
-            UpTemp = UpTemp == -1 ? (int)system.Tmax : UpTemp;
+            Collapse collapse = new Collapse(system);
+            UpTemp = UpTemp == -1 ? (int)system.Tmax + 10 : UpTemp;
             DownTemp = DownTemp == -1 ? (int)(0.20 * system.Tmax) : DownTemp;
 
             right = new Point[collapse.right.Length];
@@ -118,7 +118,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
                 left[i] = new Point(x, y);
             }
 
-            g.DrawString("T, °K", new Font("X", 14), Brushes.Black, new Point(80, 0));
+            g.DrawString("T, °С", new Font("X", 14), Brushes.Black, new Point(80, 0));
             if (f)
             {
                 g.DrawLines(penApp, right);
@@ -153,6 +153,12 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
         }
 
+        /// <summary>
+        /// Рисует график свободной энергии Гиббса
+        /// </summary>
+        /// <param name="tempD">нижняя граница температуры</param>
+        /// <param name="tempU">верхняя граница температуры</param>
+        /// <param name="tempInt">шаг температуры</param>
         public void DrawDG(int tempD, int tempU, int tempInt)
         {
             DownTemp = DownTemp == -1 ? 0 : DownTemp;
@@ -186,7 +192,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Рисует оси координат
         /// </summary>
-        public void DrawAxes()
+        public void DrawAxes(bool f = false)
         {
             g.DrawString(system.ElementA + system.ElementX, new Font("X", 14), Brushes.Black, new Point(80, width + 30));
             g.DrawString(system.ElementB + system.ElementX, new Font("X", 14), Brushes.Black, new Point(width - 100, width + 30));
@@ -196,11 +202,10 @@ namespace Activision_Mendeleyev_table.DrawingClasses
 
             for (double x = 0; x <= 1; x += 0.1)
             {
-                g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 
-                    80 + (float)(width * x), width - 30);
+                g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 80 + (float)(width * x), width - 30);
                 g.DrawLine(Pens.Black, 80 + (int)(width * x), width - 45, 80 + (int)(width * x), width - 35);
             }
-            g.DrawString("1", new Font("X", 12), Brushes.Black, width + 30, width - 30);
+            g.DrawString("1", new Font("X", 12), Brushes.Black, width + 65, width - 30);
 
             double c = Math.Round((UpTemp - DownTemp) / 100.0);
             if (c == 0)
@@ -210,11 +215,18 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             else
                 c *= 10;
 
-            for (double x = DownTemp; x <= UpTemp; x += c)
-            {
-                g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 0, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
-                g.DrawLine(Pens.Black, 75, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width), 85, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
-            }
+            if (f)
+                for (double x = DownTemp; x <= UpTemp; x += c)
+                {
+                    g.DrawString(ToC(x).ToString(), new Font("X", 12), Brushes.Black, 0, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
+                    g.DrawLine(Pens.Black, 75, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width), 85, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
+                }
+            else
+                for (double x = DownTemp; x <= UpTemp; x += c)
+                {
+                    g.DrawString(x.ToString(), new Font("X", 12), Brushes.Black, 0, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
+                    g.DrawLine(Pens.Black, 75, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width), 85, width - 40 - (int)((x - DownTemp) / (UpTemp - DownTemp) * width));
+                }
         }
 
         /// <summary>
@@ -255,11 +267,11 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             {
                 foreach (var item in left)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 12, item.Y - 12, 24, 24);
+                    g.FillEllipse(penExp.Brush, item.X - 8, item.Y - 8, 16, 16);
                 }
                 foreach (var item in right)
                 {
-                    g.FillEllipse(penExp.Brush, item.X - 12, item.Y - 12, 24, 24);
+                    g.FillEllipse(penExp.Brush, item.X - 8, item.Y - 8, 16, 16);
                 }
             }
         }
@@ -282,11 +294,11 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <summary>
         /// Добавляет точку в эксперимент 
         /// </summary>
-        /// <param name="x1">координата X</param>
+        /// <param name="x">координата X</param>
         /// <param name="t">координата Y</param>
-        public static void AddExperimentalPoint(double x1, double t)
+        public static void AddExperimentalPoint(double x, double t)
         {
-            experiment.Add(new PointF((float)x1, (float)t));
+            experiment.Add(new PointF((float)x, (float)t));
         }
 
         /// <summary>
@@ -305,5 +317,19 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         {
             experiment.Clear();
         }
+
+        /// <summary>
+        /// Перевод температуры из градусов Кельвина в Цельсия
+        /// </summary>
+        /// <param name="t">температура в градусах Кельвина</param>
+        /// <returns>температура в градусах Цельсия</returns>
+        public static double ToC(double t) { return t - 273; }
+
+        /// <summary>
+        /// Перевод температуры из градусов Цельсия в Кельвина
+        /// </summary>
+        /// <param name="t">температура в градусах Цельсия</param>
+        /// <returns>температура в градусах Кельвина</returns>
+        public static int ToK(int t) { return t + 273; }
     }
 }

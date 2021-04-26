@@ -345,7 +345,7 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void DomeOfDecayWindowOpen_Click(object sender, RoutedEventArgs e)
         {
-            new DomeOfDecay(elem).ShowDialog();
+            new DomeOfDecay(elem, ref dat).ShowDialog();
         }
     }
 }

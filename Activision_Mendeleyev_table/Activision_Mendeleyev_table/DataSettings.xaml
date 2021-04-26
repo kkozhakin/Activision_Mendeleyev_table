@@ -177,33 +177,13 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <TextBlock Text="c = " FontSize="20" VerticalAlignment="Top" TextWrapping="Wrap" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5" Width="50" Height="40">
-            <TextBlock.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform X="20" Y="410"/>
-                </TransformGroup>
-            </TextBlock.RenderTransform>
-        </TextBlock>
-        <TextBox x:Name="c" Text="-1" FontSize="20" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100">
-            <TextBox.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform X="90" Y="410"/>
-                </TransformGroup>
-            </TextBox.RenderTransform>
-        </TextBox>
         <TextBlock Text="A = " FontSize="20" VerticalAlignment="Top" TextWrapping="Wrap" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5" Width="50" Height="40">
             <TextBlock.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="215" Y="435"/>
+                    <TranslateTransform X="80" Y="410"/>
                 </TransformGroup>
             </TextBlock.RenderTransform>
         </TextBlock>
@@ -213,7 +193,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="265" Y="435"/>
+                    <TranslateTransform X="150" Y="410"/>
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
@@ -223,7 +203,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="20" Y="460"/>
+                    <TranslateTransform X="80" Y="460"/>
                 </TransformGroup>
             </TextBlock.RenderTransform>
         </TextBlock>
@@ -233,7 +213,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="90" Y="460"/>
+                    <TranslateTransform X="150" Y="460"/>
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
@@ -243,7 +223,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="390" Y="410"/>
+                    <TranslateTransform X="330" Y="410"/>
                 </TransformGroup>
             </TextBlock.RenderTransform>
         </TextBlock>
@@ -253,7 +233,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="-25" Y="410"/>
+                    <TranslateTransform X="-85" Y="410"/>
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
@@ -263,7 +243,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="390" Y="460"/>
+                    <TranslateTransform X="330" Y="460"/>
                 </TransformGroup>
             </TextBlock.RenderTransform>
         </TextBlock>
@@ -273,7 +253,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="-25" Y="460"/>
+                    <TranslateTransform X="-85" Y="460"/>
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
