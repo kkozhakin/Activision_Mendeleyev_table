@@ -82,7 +82,7 @@ namespace Activision_Mendeleyev_table
             {
                 this.Title = "Таблица системы " + elem;
 
-                dat = MendeleevTable.BinarySistem.Find(x => x.TableName == elem);
+                dat = MendeleevTable.BinarySystem.Find(x => x.TableName == elem);
 
                 if (dat == null)
                 {
@@ -233,10 +233,10 @@ namespace Activision_Mendeleyev_table
             }
             else
             {
-                MendeleevTable.BinarySistem.Remove(MendeleevTable.BinarySistem.Find(x => x.TableName == elem));
-                MendeleevTable.BinarySistem.Add(dat);
+                MendeleevTable.BinarySystem.Remove(MendeleevTable.BinarySystem.Find(x => x.TableName == elem));
+                MendeleevTable.BinarySystem.Add(dat);
 
-                DataGridHelper.Serialize("BinarySistems.xml", ref MendeleevTable.BinarySistem);
+                DataGridHelper.Serialize("BinarySystems.xml", ref MendeleevTable.BinarySystem);
             }
         }
 

@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Activision_Mendeleyev_table.DrawingClasses;
 using Point = Activision_Mendeleyev_table.HelperClasses.Point;
-using System.Linq;
 
 namespace Activision_Mendeleyev_table
 {
@@ -29,22 +28,48 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private BinSystem sys, sys_ap = null;
         /// <summary>
-        /// Графики(купол распада/функция смешения и аппроксимированная функция смешения)
+        /// Графики(базовый и аппроксимированный)
         /// </summary>
         private CollapseGraph graph, graph_ap;
         /// <summary>
         /// Флаг: 0 - купол распада, 1 - функция смешения, 2 - свободная энергия Гиббса, 3 - оценка чувствительности
         /// </summary>
         private byte f = 0;
+
+        /// <summary>
+        /// Таблица свойств системы
+        /// </summary>
         private readonly System.Data.DataTable data;
+        /// <summary>
+        /// Флаг, для работы со слайдерами
+        /// </summary>
         private bool changeValue = true;
 
-        private System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
-
+        /// <summary>
+        /// Изображение графика купола распада
+        /// </summary>
         private System.Drawing.Image DoD_img;
+        /// <summary>
+        /// Изображение графика теплоты смешения
+        /// </summary>
         private System.Drawing.Image Hsm_img;
+        /// <summary>
+        /// Изображение графика свободной энергии Гиббса
+        /// </summary>
         private System.Drawing.Image Gsm_img;
+
+        /// <summary>
+        /// Окно настроек графика свободной энергии Гиббса
+        /// </summary>
         dG_Temp win;
+
+        /// <summary>
+        /// Поле, для отрисовки графиков
+        /// </summary>
+        private System.Windows.Forms.PictureBox diag = new System.Windows.Forms.PictureBox();
+        /// <summary>
+        /// График
+        /// </summary>
         Graphics g;
 
         [DllImport("user32.dll")]
@@ -69,6 +94,7 @@ namespace Activision_Mendeleyev_table
         /// Первоначальные настройки и построение купола распада
         /// </summary>
         /// <param name="name">обозначение системы</param>
+        /// <param name="name">таблица свойств системы</param>
         public DomeOfDecay(string name, ref System.Data.DataTable data)
         {
             InitializeComponent();
@@ -83,12 +109,12 @@ namespace Activision_Mendeleyev_table
                 MessageBox.Show("Неверно заданы названия элементов входящих в систему! Измените их в меню настроек!", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             else
-                //sys = new BinSystem(name, A, B, X);
+                sys = new BinSystem(name, A, B, X);
                 //sys = new BinSystem(name, A, B, X, 6, 4.8, 3, 4, 2);
                 //sys = new BinSystem(name, A, B, X, 6, 1.745, 2, 1, 1);
-                sys = new BinSystem(name, A, B, X, 4, 4.439, 3, 4, 2);
+                //sys = new BinSystem(name, A, B, X, 4, 4.439, 3, 4, 2);
 
-                DataSettings ds = new DataSettings(sys);
+            DataSettings ds = new DataSettings(sys);
             ds.ShowDialog();
             sys = ds.GetBS();
 
@@ -273,65 +299,7 @@ namespace Activision_Mendeleyev_table
 
             if (dat.Count > 0 && t != -1)
             {
-                System.Windows.Resources.StreamResourceInfo ri = Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
-                Stream data = ri.Stream;
-                System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(data);
-
-                List<Point> ExpDots = new List<Point>();
-                List<Point> Dots = new List<Point>();
-                foreach (List<double> point in dat)
-                    ExpDots.Add(new Point(point[0], point[1]));
-
-                //double r_min = Library.FindOptimalLine(dat, (int)CollapseGraph.ToK(t));
-                double r1 = sys.r_1, r2 = sys.r_2, r3 = sys.r_3, x1 = sys.x_1, x3 = sys.x_3;
-                string r = "", r_old = "1";
-                double min = Criterion.Dots_Distance(ExpDots, Dots), min_t = 1000000;
-                double[] par_min = new double[] { sys.r_1, sys.r_2, sys.r_3, sys.x_1, sys.x_3 };
-                for (r1 = sys.r_1 - 0.02; r1 <= sys.r_1 + 0.02; r1 += 0.002)
-                    if (r1 > 0)
-                        for (r2 = sys.r_2 - 0.02; r2 <= sys.r_2 + 0.02; r2 += 0.002)
-                            if (r2 > 0)
-                                for (r3 = sys.r_3 - 0.02; r3 <= sys.r_3 + 0.02; r3 += 0.002)
-                                    if (r3 > 0)
-                                        for (x1 = sys.x_1 - 0.02; x1 <= sys.x_1 + 0.02; x1 += 0.002)
-                                            if (x1 > 0)
-                                                for (x3 = sys.x_3 - 0.02; x3 <= sys.x_3 + 0.02; x3 += 0.002)
-                                                    if (x3 > 0)
-                                                    {
-                                                        if (r != r_old)
-                                                        {
-                                                            r = Collapse.GetRatio(Math.Abs(r1 - r2) / Math.Min(r1 + r3, r2 + r3));
-                                                            string[] x1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x1").Value.Split(';');
-                                                            string[] x2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x2").Value.Split(';');
-                                                            string[] y1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
-                                                            string[] y2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
-
-                                                            Dots.Clear();
-                                                            for (int i = 0; i < x1values.Length; i++)
-                                                                Dots.Add(new Point(double.Parse(x1values[i]), double.Parse(y1values[i]) * t));
-
-                                                            for (int i = 0; i < x2values.Length; i++)
-                                                                Dots.Add(new Point(double.Parse(x2values[i]), double.Parse(y2values[i]) * t));
-
-                                                            r_old = r;
-                                                        }
-                                                        double _t = (33.33 * (1 - (sys.z / sys.n) * Math.Exp((x1 - x3) * (x1 - x3) * -0.25)) + 8.83) *
-                                                            sys.m * sys.n * sys.z * sys.zX *
-                                                            Math.Pow(Math.Abs(r1 - r2) / Math.Min(r1 + r3, r2 + r3), 2) / (1.9844 * 0.002);
-                                                        if (Math.Abs(CollapseGraph.ToK(t) - _t) < min_t)
-                                                        {
-                                                            min_t = Math.Abs(CollapseGraph.ToK(t) - _t);
-                                                            if (min == -1 || Criterion.Dots_Distance(ExpDots, Dots) <= min)
-                                                            {
-                                                                min = Criterion.Dots_Distance(ExpDots, Dots);
-                                                                par_min[0] = r1;
-                                                                par_min[1] = r2;
-                                                                par_min[2] = r3;
-                                                                par_min[3] = x1;
-                                                                par_min[4] = x3;
-                                                            }
-                                                        }
-                                                    }
+                double[] par_min = Library.DomeApproxi(dat, t, sys);
                 sys_ap.r_1 = par_min[0];
                 sys_ap.r_2 = par_min[1];
                 sys_ap.r_3 = par_min[2];
@@ -376,6 +344,7 @@ namespace Activision_Mendeleyev_table
             r3_text.Visibility = Visibility.Visible;
 
             Back.Visibility = Visibility.Visible;
+            Accept.Visibility = Visibility.Visible;
 
             Hsm.IsEnabled = false;
             Gsm.IsEnabled = false;
@@ -502,9 +471,9 @@ namespace Activision_Mendeleyev_table
         }
 
         /// <summary>
-        /// Запускает аппроксимацию функции смешения
+        /// Построение функции смешения
         /// </summary>
-        private void Approxi_Click(object sender, RoutedEventArgs e)
+        private void Hsm_Click(object sender, RoutedEventArgs e)
         {
             f = 1;
 
@@ -590,12 +559,12 @@ namespace Activision_Mendeleyev_table
         }
 
         /// <summary>
-        /// Возвращает к построению купола распада
+        /// Возвращает к построению функции смешения без изменений параметров
         /// </summary>
-        private void Back_Click(object sender, RoutedEventArgs e) //Add buttom Accept and Back(sys_ap = null)
+        private void Back_Click(object sender, RoutedEventArgs e)
         {
             f = 1;
-            //sys_ap = null;
+            sys_ap = null;
             Points.Visibility = Visibility.Visible;
             Tcr_label.Visibility = Visibility.Visible;
             Tcr_new_label.Visibility = Visibility.Visible;
@@ -622,6 +591,50 @@ namespace Activision_Mendeleyev_table
             r2_text.Visibility = Visibility.Hidden;
             r3_text.Visibility = Visibility.Hidden;
             Back.Visibility = Visibility.Hidden;
+            Accept.Visibility = Visibility.Hidden;
+
+            Hsm.IsEnabled = true;
+            Gsm.IsEnabled = true;
+
+            SetColor();
+            SetBorders();
+
+            diag.Refresh();
+        }
+
+        /// <summary>
+        /// Возвращает к построению функции смешения с изменением параметров
+        /// </summary>
+        private void Accept_Click(object sender, RoutedEventArgs e)
+        {
+            f = 1;
+            Points.Visibility = Visibility.Visible;
+            Tcr_label.Visibility = Visibility.Visible;
+            Tcr_new_label.Visibility = Visibility.Visible;
+            Build.Visibility = Visibility.Visible;
+            Save.Visibility = Visibility.Visible;
+            Load.Visibility = Visibility.Visible;
+            DelRows.Visibility = Visibility.Visible;
+            x1.Visibility = Visibility.Hidden;
+            x2.Visibility = Visibility.Hidden;
+            x3.Visibility = Visibility.Hidden;
+            x1_label.Visibility = Visibility.Hidden;
+            x2_label.Visibility = Visibility.Hidden;
+            x3_label.Visibility = Visibility.Hidden;
+            x1_text.Visibility = Visibility.Hidden;
+            x2_text.Visibility = Visibility.Hidden;
+            x3_text.Visibility = Visibility.Hidden;
+            r1.Visibility = Visibility.Hidden;
+            r2.Visibility = Visibility.Hidden;
+            r3.Visibility = Visibility.Hidden;
+            r1_label.Visibility = Visibility.Hidden;
+            r2_label.Visibility = Visibility.Hidden;
+            r3_label.Visibility = Visibility.Hidden;
+            r1_text.Visibility = Visibility.Hidden;
+            r2_text.Visibility = Visibility.Hidden;
+            r3_text.Visibility = Visibility.Hidden;
+            Back.Visibility = Visibility.Hidden;
+            Accept.Visibility = Visibility.Hidden;
 
             Hsm.IsEnabled = true;
             Gsm.IsEnabled = true;

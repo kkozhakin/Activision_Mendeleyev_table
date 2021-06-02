@@ -55,7 +55,7 @@
             </MenuItem>
             <MenuItem Header="Графики">
                 <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
-                <MenuItem Name="Hsm" Header="Функция Hsm" Click="Approxi_Click" />
+                <MenuItem Name="Hsm" Header="Функция Hsm" Click="Hsm_Click" />
                 <MenuItem Name="Gsm"  Header="Функция Gsm" Click="Gsm_Click" />
             </MenuItem>
         </Menu>
@@ -262,7 +262,26 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button Name="Back" Grid.Column="0" Grid.Row="2" Content="Назад" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="34" Click="Back_Click" Grid.ColumnSpan="2" Visibility="Hidden" />
+        <Button Name="Back" Grid.Column="0" Grid.Row="2" Content="Назад" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="34" Click="Back_Click" Grid.ColumnSpan="2" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="70"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Name="Accept" Grid.Column="0" Grid.Row="2" Content="Применить" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="34" Click="Accept_Click"  Grid.ColumnSpan="2" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-70"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
         <Button Name="Save" Grid.Column="2" Grid.Row="2" Content="Сохранить точки" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="150" Click="Save_Click" RenderTransformOrigin="0.5,0.5" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>

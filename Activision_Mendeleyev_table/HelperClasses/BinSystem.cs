@@ -14,11 +14,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <summary>
         /// Константа Моделунга
         /// </summary>
-        public double A { private set; get; } = -1;
+        public double A { private set; get; }
         /// <summary>
         /// Формальный заряд общего химического элемента
         /// </summary>
-        public double zX { private set; get; } = -1;
+        public double zX { private set; get; }
         /// <summary>
         /// Обозначение системы соединений
         /// </summary>
@@ -38,15 +38,15 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <summary>
         /// Число структурных единиц
         /// </summary>
-        public double m { private set; get; } = -1;
+        public double m { private set; get; }
         /// <summary>
         /// Координационное число
         /// </summary>
-        public double n { private set; get; } = -1;
+        public double n { private set; get; }
         /// <summary>
         /// Формальный заряд
         /// </summary>
-        public double z { private set; get; } = -1;
+        public double z { private set; get; }
         /// <summary>
         /// Ионный радиус первого элемента
         /// </summary>
@@ -103,7 +103,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// <param name="A">первый химичский элемент</param>
         /// <param name="B">второй химичский элемент</param>
         /// <param name="X">общий химичский элемент</param>
-        public BinSystem(string source, Composition A, Composition B, Composition X, double n, double a, double m, double z, double zX)
+        public BinSystem(string source, Composition A, Composition B, Composition X, double n = -1, double a = -1, double m = -1, double z = -1, double zX = -1)
         {
             sourceString = source;
             elemA = A;

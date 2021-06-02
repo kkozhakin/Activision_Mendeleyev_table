@@ -258,7 +258,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                                 e = MendeleevTable.Compos.Find(x => x.Name == str1);
 
                             if (e == null)
-                                d = MendeleevTable.BinarySistem.Find(x => x.TableName == str1);
+                                d = MendeleevTable.BinarySystem.Find(x => x.TableName == str1);
 
                             if (d == null & e == null)
                                 throw new Exception("Отсутствует соединение, элемент или система" + str1 + ".", new Exception("MyException"));
@@ -308,7 +308,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
                                 e = MendeleevTable.Compos.Find(x => x.Name == str1);
 
                             if (e == null)
-                                d = MendeleevTable.BinarySistem.Find(x => x.TableName == str1);
+                                d = MendeleevTable.BinarySystem.Find(x => x.TableName == str1);
 
                             if (d == null & e == null)
                                 throw new Exception("Отсутствует соединение, элемент или система" + str1 + ".", new Exception("MyException"));
@@ -477,7 +477,7 @@ namespace Activision_Mendeleyev_table.HelperClasses
         private static double Find(LinkedList<string> strs, int u)
         {
             LinkedListNode<string> str = strs.First;
-            DataTable d = MendeleevTable.BinarySistem.Find(x => x.TableName == str.Value);
+            DataTable d = MendeleevTable.BinarySystem.Find(x => x.TableName == str.Value);
             Composition e = MendeleevTable.Elems.Find(x => x.Name == str.Value);
 
             if (e == null)

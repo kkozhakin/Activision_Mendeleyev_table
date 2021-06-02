@@ -26,7 +26,7 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Лист систем соединений
         /// </summary>
-        public static List<System.Data.DataTable> BinarySistem = new List<System.Data.DataTable>();
+        public static List<System.Data.DataTable> BinarySystem = new List<System.Data.DataTable>();
 
         /// <summary>
         /// Конструктор главного окна
@@ -70,7 +70,7 @@ namespace Activision_Mendeleyev_table
             table.Items.Clear();
             table.ItemsSource = strings;
 
-            Deserialize("BinarySistems.xml", ref BinarySistem);
+            Deserialize("BinarySystems.xml", ref BinarySystem);
             Deserialize("Compositions.xml", ref Compos);
 
             if (!Deserialize("Elems.xml", ref Elems))

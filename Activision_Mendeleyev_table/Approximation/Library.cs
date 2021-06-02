@@ -4,7 +4,7 @@ using Point = Activision_Mendeleyev_table.HelperClasses.Point;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-
+using Activision_Mendeleyev_table.DrawingClasses;
 
 namespace Activision_Mendeleyev_table.Approximation
 {
@@ -239,49 +239,73 @@ namespace Activision_Mendeleyev_table.Approximation
         }
 
         /// <summary>
-        /// Нахождение оптимальной линии из номограмм
+        /// Метод аппроксимации набора точек аналитическими выражениями, описывающими купол распада
         /// </summary>
+        /// <param name="sys">данные системы</param>
         /// <param name="dat">набор точек</param>
         /// <param name="t">критическая температура</param>
-        /// <returns>оптимальное соотношение</returns>
-        public static double FindOptimalLine(List<List<double>> dat, int t)
+        /// <returns>оптимальный набор параметров</returns>
+        public static double[] DomeApproxi(List<List<double>> dat, int t, HelperClasses.BinSystem sys)
         {
             System.Windows.Resources.StreamResourceInfo ri = Application.GetResourceStream(new Uri("DrawingClasses/Collapse.xml", UriKind.Relative));
             Stream data = ri.Stream;
+            System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(data);
 
             List<Point> ExpDots = new List<Point>();
             List<Point> Dots = new List<Point>();
-            double min = -1, r_min = 0;
             foreach (List<double> point in dat)
                 ExpDots.Add(new Point(point[0], point[1]));
 
-            if (ExpDots.Count > 0)
-            {
-                System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(data);
-                foreach (string r in new string[7] { "0,00", "0,05", "0,10", "0,15", "0,20", "0,25", "0,30" })
-                {
-                    string[] x1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x1").Value.Split(';');
-                    string[] x2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x2").Value.Split(';');
-                    string[] y1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
-                    string[] y2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
+            double r1 = sys.r_1, r2 = sys.r_2, r3 = sys.r_3, x1 = sys.x_1, x3 = sys.x_3;
+            string r = "", r_old = "1";
+            double min = 1000000, min_t = 1000000;
+            double[] par_min = new double[] { sys.r_1, sys.r_2, sys.r_3, sys.x_1, sys.x_3 };
+            for (r1 = sys.r_1 - 0.02; r1 <= sys.r_1 + 0.02; r1 += 0.002)
+                if (r1 > 0)
+                    for (r2 = sys.r_2 - 0.02; r2 <= sys.r_2 + 0.02; r2 += 0.002)
+                        if (r2 > 0)
+                            for (r3 = sys.r_3 - 0.02; r3 <= sys.r_3 + 0.02; r3 += 0.002)
+                                if (r3 > 0)
+                                    for (x1 = sys.x_1 - 0.02; x1 <= sys.x_1 + 0.02; x1 += 0.002)
+                                        if (x1 > 0)
+                                            for (x3 = sys.x_3 - 0.02; x3 <= sys.x_3 + 0.02; x3 += 0.002)
+                                                if (x3 > 0)
+                                                {
+                                                    if (r != r_old)
+                                                    {
+                                                        r = Collapse.GetRatio(Math.Abs(r1 - r2) / Math.Min(r1 + r3, r2 + r3));
+                                                        string[] x1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x1").Value.Split(';');
+                                                        string[] x2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("x2").Value.Split(';');
+                                                        string[] y1values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y1").Value.Split(';');
+                                                        string[] y2values = doc.Root.Elements().First(p => p.Attribute("ratio").Value == r).Element("y2").Value.Split(';');
 
-                    Dots.Clear();
-                    for (int i = 0; i < x1values.Length; i++)
-                        Dots.Add(new Point(double.Parse(x1values[i]), double.Parse(y1values[i]) * t));
+                                                        Dots.Clear();
+                                                        for (int i = 0; i < x1values.Length; i++)
+                                                            Dots.Add(new Point(double.Parse(x1values[i]), double.Parse(y1values[i]) * t));
 
-                    for (int i = 0; i < x2values.Length; i++)
-                        Dots.Add(new Point(double.Parse(x2values[i]), double.Parse(y2values[i]) * t));
+                                                        for (int i = 0; i < x2values.Length; i++)
+                                                            Dots.Add(new Point(double.Parse(x2values[i]), double.Parse(y2values[i]) * t));
 
-                    double s = Criterion.Dots_Distance(ExpDots, Dots);
-
-                    if (min == -1 || s < min)
-                    {
-                        min = s;
-                        r_min = double.Parse(r);
-                    }
-                }
-            }
-            return r_min;
+                                                        r_old = r;
+                                                    }
+                                                    double _t = (33.33 * (1 - (sys.z / sys.n) * Math.Exp((x1 - x3) * (x1 - x3) * -0.25)) + 8.83) *
+                                                        sys.m * sys.n * sys.z * sys.zX *
+                                                        Math.Pow(Math.Abs(r1 - r2) / Math.Min(r1 + r3, r2 + r3), 2) / (1.9844 * 0.002);
+                                                    if (Math.Abs(CollapseGraph.ToK(t) - _t) < min_t)
+                                                    {
+                                                        min_t = Math.Abs(CollapseGraph.ToK(t) - _t);
+                                                        if (min == -1 || Criterion.Dots_Distance(ExpDots, Dots) <= min)
+                                                        {
+                                                            min = Criterion.Dots_Distance(ExpDots, Dots);
+                                                            par_min[0] = r1;
+                                                            par_min[1] = r2;
+                                                            par_min[2] = r3;
+                                                            par_min[3] = x1;
+                                                            par_min[4] = x3;
+                                                        }
+                                                    }
+                                                }
+            return par_min;
         }
     }
 }

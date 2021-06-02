@@ -27,9 +27,9 @@ namespace Activision_Mendeleyev_table
             for (int i = 0; i < MendeleevTable.Compos.Count; i++)
                 for (int j = 0; j < MendeleevTable.Compos[i].Properties.Count; j++)
                     dat.Rows.Add(MendeleevTable.Compos[i].Properties[j].First.First != null ? MendeleevTable.Compos[i].Properties[j].First.Second : "", (MendeleevTable.Compos[i].Properties[j].First.First[0] != '=')?MendeleevTable.Compos[i].Properties[j].First.First: MendeleevTable.Compos[i].Properties[j].First.First.Substring(1));
-            for (int i = 0; i < MendeleevTable.BinarySistem.Count; i++)
-                for (int j = 0; j < MendeleevTable.BinarySistem[i].Columns.Count; j++)
-                    dat.Rows.Add(MendeleevTable.BinarySistem[i].Columns[j].Caption != null ? MendeleevTable.BinarySistem[i].Columns[j].Caption : "", (MendeleevTable.BinarySistem[i].Columns[j].ColumnName[0] != '=')?MendeleevTable.BinarySistem[i].Columns[j].ColumnName: MendeleevTable.BinarySistem[i].Columns[j].ColumnName.Substring(1));
+            for (int i = 0; i < MendeleevTable.BinarySystem.Count; i++)
+                for (int j = 0; j < MendeleevTable.BinarySystem[i].Columns.Count; j++)
+                    dat.Rows.Add(MendeleevTable.BinarySystem[i].Columns[j].Caption != null ? MendeleevTable.BinarySystem[i].Columns[j].Caption : "", (MendeleevTable.BinarySystem[i].Columns[j].ColumnName[0] != '=')?MendeleevTable.BinarySystem[i].Columns[j].ColumnName: MendeleevTable.BinarySystem[i].Columns[j].ColumnName.Substring(1));
 
             formuls.ItemsSource = dat.DefaultView;
         }

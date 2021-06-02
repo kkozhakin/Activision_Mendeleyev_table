@@ -5,14 +5,37 @@ using System.IO;
 
 namespace Activision_Mendeleyev_table.HelperClasses
 {
+
+    /// <summary>
+    /// Формирует отчет в формате pdf
+    /// </summary>
     class Report
     {
-        private BinSystem sys;
-        private BinSystem sys_ap;
+        /// <summary>
+        /// Системы соединений(базовая и аппроксимированная)
+        /// </summary>
+        private BinSystem sys, sys_ap;
+
+        /// <summary>
+        /// Изображение графика купола распада
+        /// </summary>
         private System.Drawing.Image DoD;
+        /// <summary>
+        /// Изображение графика теплоты смешения
+        /// </summary>
         private System.Drawing.Image Hsm;
+        /// <summary>
+        /// Изображение графика свободной энергии Гиббса
+        /// </summary>
         private System.Drawing.Image Gsm;
+
+        /// <summary>
+        /// Таблица свойств системы
+        /// </summary>
         private System.Data.DataTable dat;
+        /// <summary>
+        /// Окно настроек графика свободной энергии Гиббса
+        /// </summary>
         private dG_Temp win;
 
         public Report(BinSystem sys, BinSystem sys_ap = null, System.Data.DataTable dat = null, System.Drawing.Image DoD = null, 
@@ -27,6 +50,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
             this.win = win;
         }
 
+        /// <summary>
+        /// Создание отчета
+        /// </summary>
         public void CreateReport()
         {
             var doc = new Document();
@@ -187,6 +213,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
 
         }
 
+        /// <summary>
+        /// Создание параграфа
+        /// </summary>
         private Paragraph CreateParagraph(string text)
         {
             string ttf = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "ARIALUNI.TTF");

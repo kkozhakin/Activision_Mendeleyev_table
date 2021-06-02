@@ -77,7 +77,7 @@ namespace Activision_Mendeleyev_table
                     MessageBox.Show("Поле A - неотрицательное число!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
                 {
-                    double.TryParse(X.Properties.Find(x => x.First.Second == FZ.Text).Second[int.Parse(numX.Text)], out q); //try
+                    double.TryParse(X.Properties.Find(x => x.First.Second == FZ.Text).Second[int.Parse(numX.Text)], out q);
                     sys = new BinSystem(elemA.Text + elemX.Text + '-' + elemB.Text + elemX.Text, A, B, X, double.Parse(n.Text), double.Parse(_A.Text), double.Parse(m.Text), double.Parse(z.Text), q);
                     double.TryParse(A.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numA.Text)], out sys.x_1); 
                     double.TryParse(B.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numB.Text)], out sys.x_2);

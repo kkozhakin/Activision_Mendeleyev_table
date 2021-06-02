@@ -34,8 +34,8 @@ namespace Activision_Mendeleyev_table
             {
                 label.Content = "Введите новую систему соединений";
                 this.Title = "Выберите/введите систему соединений";
-                for (int i = 0; i < MendeleevTable.BinarySistem.Count; i++)
-                    ComposSystem.Items.Add(MendeleevTable.BinarySistem[i].TableName);
+                for (int i = 0; i < MendeleevTable.BinarySystem.Count; i++)
+                    ComposSystem.Items.Add(MendeleevTable.BinarySystem[i].TableName);
             }
 
             if (ComposSystem.Items.Count > 0)
