@@ -191,9 +191,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// Свободная энергия Гиббса
         /// </summary>
         /// <param name="T">температура</param>
-        public double Gsm(double x, double T)
+        public double Gsm(double x, double T, double k = 1)
         {
-            return Hsm(x) - T * Ssm(x);
+            return k * Hsm(x) - T * Ssm(x);
         }
 
         /// <summary>

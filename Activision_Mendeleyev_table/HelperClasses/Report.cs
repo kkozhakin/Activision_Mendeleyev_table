@@ -38,8 +38,11 @@ namespace Activision_Mendeleyev_table.HelperClasses
         /// </summary>
         private dG_Temp win;
 
+        private double k1, k2;
+        private int t;
+
         public Report(BinSystem sys, BinSystem sys_ap = null, System.Data.DataTable dat = null, System.Drawing.Image DoD = null, 
-            System.Drawing.Image Hsm = null, System.Drawing.Image Gsm = null, dG_Temp win = null)
+            System.Drawing.Image Hsm = null, System.Drawing.Image Gsm = null, dG_Temp win = null, double k1 = 1, double k2 = 1, int t = -1)
         {
             this.sys_ap = sys_ap;
             this.sys = sys;
@@ -48,6 +51,9 @@ namespace Activision_Mendeleyev_table.HelperClasses
             this.Hsm = Hsm;
             this.Gsm = Gsm;
             this.win = win;
+            this.k1 = k1;
+            this.k2 = k2;
+            this.t = t;
         }
 
         /// <summary>
@@ -199,12 +205,24 @@ namespace Activision_Mendeleyev_table.HelperClasses
                     doc.Add(jpg);
 
                     table = new PdfPTable(3);
-                    table.AddCell("T_start, °C");
-                    table.AddCell("T_end, °C");
-                    table.AddCell("Step, °");
-                    table.AddCell(win.TempD.ToString());
-                    table.AddCell(win.TempU.ToString());
-                    table.AddCell(win.TempInt.ToString());
+                    if (k1 == 1 && k2 == 1)
+                    {
+                        table.AddCell("T_start, °C");
+                        table.AddCell("T_end, °C");
+                        table.AddCell("Step, °");
+                        table.AddCell(win.TempD.Text);
+                        table.AddCell(win.TempU.Text);
+                        table.AddCell(win.TempInt.Text);
+                    }
+                    else
+                    {
+                        table.AddCell("T, °C");
+                        table.AddCell("k1");
+                        table.AddCell("k2");
+                        table.AddCell(t.ToString());
+                        table.AddCell(String.Format("{0:f4}", k1));
+                        table.AddCell(String.Format("{0:f4}", k2));
+                    }
                     doc.Add(table);
                 }
 

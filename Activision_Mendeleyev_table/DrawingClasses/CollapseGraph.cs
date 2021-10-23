@@ -159,7 +159,7 @@ namespace Activision_Mendeleyev_table.DrawingClasses
         /// <param name="tempD">нижняя граница температуры</param>
         /// <param name="tempU">верхняя граница температуры</param>
         /// <param name="tempInt">шаг температуры</param>
-        public void DrawDG(int tempD, int tempU, int tempInt)
+        public void DrawDG(int tempD, int tempU, int tempInt, double k1 = 1, double k2 = 1)
         {
             DownTemp = DownTemp == -1 ? 0 : DownTemp;
             UpTemp = UpTemp == -1 ? (int)(system.Hsm(0.5) * 1000) + 100 : UpTemp;
@@ -170,17 +170,25 @@ namespace Activision_Mendeleyev_table.DrawingClasses
             dh[20] = new Point(80 + width, width - 40 - (int)((system.Hsm(0.999999) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
             g.DrawLines(penApp, dh);
 
-            Point[] dg = new Point[21];
+            Point[] dg = new Point[11];
             Point[] ds = new Point[21];
 
             for (int t = tempD; t < tempU; t += tempInt)
             {
-                for (double i = 0.00001; i < 1; i += 0.05)
+                for (double i = 0.00001; i < 0.5; i += 0.05)
                 {
                     ds[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((-t * system.Ssm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
-                    dg[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Gsm(i, t) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                    dg[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Gsm(i, t, k1) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
                 }
-                dg[20] = new Point(80 + width, width - 40 - (int)((system.Gsm(0.99999, t) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                dg[10] = new Point(80 + (int)(0.5 * width), width - 40 - (int)((system.Gsm(0.5, t, k1) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                g.DrawLines(pen, dg);
+                dg = new Point[11];
+                for (double i = 0.5; i < 1; i += 0.05)
+                {
+                    ds[(int)Math.Round(i * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((-t * system.Ssm(i) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                    dg[(int)Math.Round((i - 0.5) * 20)] = new Point(80 + (int)(i * width), width - 40 - (int)((system.Gsm(i, t, k2) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
+                }
+                dg[10] = new Point(80 + width, width - 40 - (int)((system.Gsm(0.99999, t, k2) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
                 ds[20] = new Point(80 + width, width - 40 - (int)((-t * system.Ssm(0.99999) * 1000 - DownTemp) / (UpTemp - DownTemp) * width));
                 g.DrawLines(pen, dg);
                 g.DrawLines(penExp, ds);

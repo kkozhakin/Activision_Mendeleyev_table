@@ -63,6 +63,8 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         dG_Temp win;
 
+        double k1 = 1, k2 = 1;
+
         /// <summary>
         /// Поле, для отрисовки графиков
         /// </summary>
@@ -110,12 +112,11 @@ namespace Activision_Mendeleyev_table
                     MessageBoxButton.OK, MessageBoxImage.Error);
             else
                 sys = new BinSystem(name, A, B, X);
-                //sys = new BinSystem(name, A, B, X, 6, 4.8, 3, 4, 2);
-                //sys = new BinSystem(name, A, B, X, 6, 1.745, 2, 1, 1);
-                //sys = new BinSystem(name, A, B, X, 4, 4.439, 3, 4, 2);
 
-            DataSettings ds = new DataSettings(sys);
+            DataSettings ds = new DataSettings(sys); 
             ds.ShowDialog();
+            if (ds.f == false)
+                this.Close();
             sys = ds.GetBS();
 
             host.Child = diag;
@@ -235,10 +236,18 @@ namespace Activision_Mendeleyev_table
                     if (sys_ap != null)
                     {
                         graph_ap = new CollapseGraph(g, sys_ap, diag.Width);
-                        graph_ap.DrawDG((int)CollapseGraph.ToK(int.Parse(win.TempD.Text)), (int)CollapseGraph.ToK(int.Parse(win.TempU.Text)), int.Parse(win.TempInt.Text));
+                        if ((k1 != 1 || k2 != 1) && int.Parse(Tkp.Text) != -1)
+                            graph_ap.DrawDG((int)CollapseGraph.ToK(int.Parse(Tkp.Text)), (int)CollapseGraph.ToK(int.Parse(Tkp.Text)) + 1, 1, k1, k2);
+                        else
+                            graph_ap.DrawDG((int)CollapseGraph.ToK(int.Parse(win.TempD.Text)), (int)CollapseGraph.ToK(int.Parse(win.TempU.Text)), int.Parse(win.TempInt.Text));
                     }
                     else
-                        graph.DrawDG((int)CollapseGraph.ToK(int.Parse(win.TempD.Text)), (int)CollapseGraph.ToK(int.Parse(win.TempU.Text)), int.Parse(win.TempInt.Text));
+                    {
+                        if ((k1 != 1 || k2 != 1) && int.Parse(Tkp.Text) != -1)
+                            graph.DrawDG((int)CollapseGraph.ToK(int.Parse(Tkp.Text)), (int)CollapseGraph.ToK(int.Parse(Tkp.Text)) + 1, 1, k1, k2);
+                        else
+                            graph.DrawDG((int)CollapseGraph.ToK(int.Parse(win.TempD.Text)), (int)CollapseGraph.ToK(int.Parse(win.TempU.Text)), int.Parse(win.TempInt.Text));
+                    }
                 }
 
                 if (f == 0)
@@ -269,9 +278,9 @@ namespace Activision_Mendeleyev_table
                 dat[e.Row.GetIndex()].Add(0);
                 dat[e.Row.GetIndex()].Add(0);
             }
-            if (!float.TryParse((e.EditingElement as TextBox).Text.Replace('.', ','), out float p) || p < 0)
+            if (!float.TryParse((e.EditingElement as TextBox).Text.Replace('.', ','), out float p))
             {
-                MessageBox.Show("Координаты точки должны быть неотрицательным числом!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Координаты точки должны быть числом!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 (e.EditingElement as TextBox).Text = "";
 
                 e.Cancel = true;
@@ -285,26 +294,101 @@ namespace Activision_Mendeleyev_table
         /// <summary>
         /// Построение купола распада
         /// </summary>
-        private void Build_Click(object sender, RoutedEventArgs e)
+        private void Approxi_Click(object sender, RoutedEventArgs e)
         {
-            f = 0;
-
             SetColor();
             SetBorders();
-
-            int t = int.Parse(Tkp.Text);
 
             if (sys_ap == null)
                 sys_ap = sys.Clone();
 
-            if (dat.Count > 0 && t != -1)
+            if (dat.Count == 0)
+                MessageBox.Show("Точки не заданы!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            else if (f == 0)
             {
-                double[] par_min = Library.DomeApproxi(dat, t, sys);
+                int t = (int)CollapseGraph.ToK(int.Parse(Tkp.Text));
+                if (t != -1)
+                {
+                    double[] par_min = Library.DomeApproxi(dat, t, sys);
+                    sys_ap.r_1 = par_min[0];
+                    sys_ap.r_2 = par_min[1];
+                    sys_ap.r_3 = par_min[2];
+                    sys_ap.x_1 = par_min[3];
+                    sys_ap.x_3 = par_min[4];
+                }
+                else
+                    MessageBox.Show("Критическая температура не задана!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else if (f == 1)
+            {
+                List<Point> Dots = new List<Point>();
+                foreach (List<double> point in dat)
+                    Dots.Add(new Point(point[0], point[1]));
+
+                Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
+        => 1000 * x * (1 - x) * (332 * sys.A / (x * PP[0] + (1 - x) * PP[1] + PP[2]) * Math.Pow(sys.z / sys.n * Math.Exp((PP[3] - PP[5]) * (PP[3] - PP[5]) * -0.25) - 
+        sys.z / sys.n * Math.Exp((PP[4] - PP[5]) * (PP[4] - PP[5]) * -0.25), 2) + sys.c * sys.m * sys.n * sys.z * sys.zX * Math.Pow(Math.Abs(PP[0] - PP[1]) 
+        / (x * PP[0] + (1 - x) * PP[1] + PP[2]), 2)));
+
+                double r1 = sys.r_1, r2 = sys.r_2, r3 = sys.r_3, x1 = sys.x_1, x2 = sys.x_2, x3 = sys.x_3;
+                double[] par_min = new double[] { r1, r2, r3, x1, x2, x3 };
+                double min = Criterion.Criterion_CKO(Dots, Function, par_min);             
+                for (r1 = sys.r_1 - 0.02; r1 <= sys.r_1 + 0.02; r1 += 0.005)
+                    if (r1 > 0)
+                        for (r2 = sys.r_2 - 0.02; r2 <= sys.r_2 + 0.02; r2 += 0.005)
+                            if (r2 > 0)
+                                for (r3 = sys.r_3 - 0.02; r3 <= sys.r_3 + 0.02; r3 += 0.005)
+                                    if (r3 > 0)
+                                        for (x1 = sys.x_1 - 0.02; x1 <= sys.x_1 + 0.02; x1 += 0.005)
+                                            if (x1 > 0)
+                                                for (x2 = sys.x_2 - 0.02; x2 <= sys.x_2 + 0.02; x2 += 0.005)
+                                                    if (x2 > 0)
+                                                        for (x3 = sys.x_3 - 0.02; x3 <= sys.x_3 + 0.02; x3 += 0.005)
+                                                            if (x3 > 0)
+                                                            {
+                                                                double cr = Criterion.Criterion_CKO(Dots, Function, new double[] { r1, r2, r3, x1, x2, x3 });
+                                                                if (cr < min)
+                                                                {
+                                                                    min = cr;
+                                                                    par_min[0] = r1;
+                                                                    par_min[1] = r2;
+                                                                    par_min[2] = r3;
+                                                                    par_min[3] = x1;
+                                                                    par_min[4] = x2;
+                                                                    par_min[5] = x3;
+                                                                }
+                                                            }
                 sys_ap.r_1 = par_min[0];
                 sys_ap.r_2 = par_min[1];
                 sys_ap.r_3 = par_min[2];
                 sys_ap.x_1 = par_min[3];
-                sys_ap.x_3 = par_min[4];
+                sys_ap.x_2 = par_min[4];
+                sys_ap.x_3 = par_min[5];
+            }
+            else if (f == 2)
+            {
+                int t = (int)CollapseGraph.ToK(int.Parse(Tkp.Text));
+                if (t != -1)
+                {
+                    List<Point> Dots = new List<Point>();
+                    foreach (List<double> point in dat)
+                        Dots.Add(new Point(point[0], point[1]));
+
+                    double Gsm_half(double x, double k1, double k2)
+                    {
+                        if (x <= 0.5)
+                            return sys_ap.Gsm(x, t, k1);
+                        else
+                            return sys_ap.Gsm(x, t, k2);
+                    }
+                    Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
+                    => Gsm_half(x, PP[0], PP[1]));
+                    double[] par_ap = Library.AproxiTab(Dots, Function, new double[] { 1, 1 }, Criterion.Criterion_CKO);
+                    k1 = par_ap[0];
+                    k2 = par_ap[1];
+                }
+                else
+                    MessageBox.Show("Температура не задана!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             diag.Refresh();
@@ -320,7 +404,7 @@ namespace Activision_Mendeleyev_table
             Points.Visibility = Visibility.Hidden;
             Tcr_label.Visibility = Visibility.Hidden;
             Tcr_new_label.Visibility = Visibility.Hidden;
-            Build.Visibility = Visibility.Hidden;
+            Approxi.Visibility = Visibility.Hidden;
             DelRows.Visibility = Visibility.Hidden;
             Save.Visibility = Visibility.Hidden;
             Load.Visibility = Visibility.Hidden;
@@ -346,6 +430,7 @@ namespace Activision_Mendeleyev_table
             Back.Visibility = Visibility.Visible;
             Accept.Visibility = Visibility.Visible;
 
+            DoD.IsEnabled = false;
             Hsm.IsEnabled = false;
             Gsm.IsEnabled = false;
 
@@ -424,7 +509,7 @@ namespace Activision_Mendeleyev_table
             {
                 MessageBox.Show("Неверный формат файла!");
             }
-            Points.Items.Refresh();//to do Refresh не разрешено во время выполнения операции AddNew или EditItem.
+            try { Points.Items.Refresh(); } catch (Exception) { } //Refresh не разрешено во время выполнения операции AddNew или EditItem.
             Points_RowEditEnding(this, new DataGridRowEditEndingEventArgs(new DataGridRow(), DataGridEditAction.Commit));
         }
 
@@ -453,6 +538,8 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void DeleteSelectedRows(object sender, RoutedEventArgs e)
         {
+            k1 = 1;
+            k2 = 1;
             try
             {
                 while (Points.SelectedItems.Count > 0)
@@ -471,6 +558,19 @@ namespace Activision_Mendeleyev_table
         }
 
         /// <summary>
+        /// Построение купола распада
+        /// </summary>
+        private void DoD_Click(object sender, RoutedEventArgs e)
+        {
+            f = 0;
+
+            SetColor();
+            SetBorders();
+
+            diag.Refresh();
+        }
+
+        /// <summary>
         /// Построение функции смешения
         /// </summary>
         private void Hsm_Click(object sender, RoutedEventArgs e)
@@ -479,28 +579,7 @@ namespace Activision_Mendeleyev_table
 
             SetColor();
             SetBorders();
-
-            if (sys != null && dat.Count > 0)
-            {
-                List<Point> Dots = new List<Point>();
-                foreach (List<double> point in dat)
-                    Dots.Add(new Point(point[0], point[1]));
-
-                Func<double, double[], double> Function = new Func<double, double[], double>((double x, double[] PP)
-                => 1000 * x * (1 - x) * (332 * sys.A / (x * PP[0] + (1 - x) * PP[1] + PP[2]) *
-                Math.Pow(sys.z / sys.n * Math.Exp((PP[3] - PP[5]) * (PP[3] - PP[5]) * -0.25) + sys.z / sys.n * Math.Exp((PP[4] - PP[5]) * (PP[4] - PP[5]) * -0.25), 2)
-                + sys.c * sys.m * sys.n * sys.z * sys.zX * Math.Pow(Math.Abs(PP[0] - PP[1]) / (x * PP[0] + (1 - x) * PP[1] + PP[2]), 2)));
-
-                double[] par_ap = Library.AproxiTab(Dots, Function, new double[] { sys.r_1, sys.r_2, sys.r_3, sys.x_1, sys.x_2, sys.x_3 }, new List<double> { 0.02, 0.02, 0.02, 0.02, 0.02, 0.02 }, Criterion.Criterion_CKO, Criterion.PenaltyF);
-
-                sys_ap = sys.Clone();
-                sys_ap.r_1 = par_ap[0];
-                sys_ap.r_2 = par_ap[1];
-                sys_ap.r_3 = par_ap[2];
-                sys_ap.x_1 = par_ap[3];
-                sys_ap.x_2 = par_ap[4];
-                sys_ap.x_3 = par_ap[5];
-            }
+  
             diag.Refresh();
         }
 
@@ -568,7 +647,7 @@ namespace Activision_Mendeleyev_table
             Points.Visibility = Visibility.Visible;
             Tcr_label.Visibility = Visibility.Visible;
             Tcr_new_label.Visibility = Visibility.Visible;
-            Build.Visibility = Visibility.Visible;
+            Approxi.Visibility = Visibility.Visible;
             Save.Visibility = Visibility.Visible;
             Load.Visibility = Visibility.Visible;
             DelRows.Visibility = Visibility.Visible;
@@ -593,6 +672,7 @@ namespace Activision_Mendeleyev_table
             Back.Visibility = Visibility.Hidden;
             Accept.Visibility = Visibility.Hidden;
 
+            DoD.IsEnabled = true;
             Hsm.IsEnabled = true;
             Gsm.IsEnabled = true;
 
@@ -611,7 +691,7 @@ namespace Activision_Mendeleyev_table
             Points.Visibility = Visibility.Visible;
             Tcr_label.Visibility = Visibility.Visible;
             Tcr_new_label.Visibility = Visibility.Visible;
-            Build.Visibility = Visibility.Visible;
+            Approxi.Visibility = Visibility.Visible;
             Save.Visibility = Visibility.Visible;
             Load.Visibility = Visibility.Visible;
             DelRows.Visibility = Visibility.Visible;
@@ -636,6 +716,7 @@ namespace Activision_Mendeleyev_table
             Back.Visibility = Visibility.Hidden;
             Accept.Visibility = Visibility.Hidden;
 
+            DoD.IsEnabled = true;
             Hsm.IsEnabled = true;
             Gsm.IsEnabled = true;
 
@@ -650,7 +731,7 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         private void CreateReport_Click(object sender, RoutedEventArgs e)
         {
-            new Report(sys, sys_ap, data, DoD_img, Hsm_img, Gsm_img, win).CreateReport();
+            new Report(sys, sys_ap, data, DoD_img, Hsm_img, Gsm_img, win, k1, k2, int.Parse(Tkp.Text)).CreateReport();
         }
         
         /// <summary>
@@ -714,7 +795,7 @@ namespace Activision_Mendeleyev_table
 
             changeValue = true;
             diag.Refresh();
-        }
+        }  
 
         private void r2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

@@ -20,9 +20,11 @@ namespace Activision_Mendeleyev_table.Approximation
         /// <param name="Function">аппроксимирующая функция</param>
         /// <param name="Par">начальное значение параметров функции</param>
         /// <param name="ApproxiAccuracy">метод оценки точности аппроксимации</param>
+        /// <param name="Par_lims">погрешности параметров</param>
+        /// <param name="Penalty">штрафная функция</param>
         /// <returns>новый нобор параметров функции</returns>
         public static double[] AproxiTab(List<Point> tab, Func<double, double[], double> Function, double[] Par,
-            List<double> Par_lims, Func<List<Point>, Func<double, double[], double>, double[], double> ApproxiAccuracy, Func<List<double>, double[], double[], double> Penalty)
+            Func<List<Point>, Func<double, double[], double>, double[], double> ApproxiAccuracy, List<double> Par_lims = null, Func<List<double>, double[], double[], double> Penalty = null)
         {
 
             double funN(double[] par)
@@ -30,12 +32,15 @@ namespace Activision_Mendeleyev_table.Approximation
                 if (tab.Count == 0)
                     throw new ArgumentNullException("", new Exception("MyException"));
 
-                return ApproxiAccuracy(tab, Function, par) + Penalty(Par_lims, Par, par);
+                if (Penalty != null)
+                    return ApproxiAccuracy(tab, Function, par) + Penalty(Par_lims, Par, par);
+                else
+                    return ApproxiAccuracy(tab, Function, par);
             }
 
             double[] a = GradientMinimization(funN, Par, 1E-8, 1E-11, 10000);
             return a;
-        }      
+        }
 
         /// <summary>
         /// Вычисление градиента и направляющих вектора перемещения
@@ -291,9 +296,9 @@ namespace Activision_Mendeleyev_table.Approximation
                                                     double _t = (33.33 * (1 - (sys.z / sys.n) * Math.Exp((x1 - x3) * (x1 - x3) * -0.25)) + 8.83) *
                                                         sys.m * sys.n * sys.z * sys.zX *
                                                         Math.Pow(Math.Abs(r1 - r2) / Math.Min(r1 + r3, r2 + r3), 2) / (1.9844 * 0.002);
-                                                    if (Math.Abs(CollapseGraph.ToK(t) - _t) < min_t)
+                                                    if (Math.Abs(t - _t) < min_t)
                                                     {
-                                                        min_t = Math.Abs(CollapseGraph.ToK(t) - _t);
+                                                        min_t = Math.Abs(t - _t);
                                                         if (min == -1 || Criterion.Dots_Distance(ExpDots, Dots) <= min)
                                                         {
                                                             min = Criterion.Dots_Distance(ExpDots, Dots);

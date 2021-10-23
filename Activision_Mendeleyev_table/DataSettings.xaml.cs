@@ -1,4 +1,5 @@
 ﻿using Activision_Mendeleyev_table.HelperClasses;
+using System;
 using System.Windows;
 
 namespace Activision_Mendeleyev_table
@@ -38,11 +39,7 @@ namespace Activision_Mendeleyev_table
         /// </summary>
         public BinSystem GetBS() { return sys; }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (MessageBox.Show("Вы точно хотите закрыть окно? Все несохраненные данные будут удалены!", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                e.Cancel = true;
-        }
+        public bool f = false;
 
         /// <summary>
         /// Сохраняет параметры в системе и закрывает окно
@@ -79,13 +76,21 @@ namespace Activision_Mendeleyev_table
                 {
                     double.TryParse(X.Properties.Find(x => x.First.Second == FZ.Text).Second[int.Parse(numX.Text)], out q);
                     sys = new BinSystem(elemA.Text + elemX.Text + '-' + elemB.Text + elemX.Text, A, B, X, double.Parse(n.Text), double.Parse(_A.Text), double.Parse(m.Text), double.Parse(z.Text), q);
-                    double.TryParse(A.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numA.Text)], out sys.x_1); 
-                    double.TryParse(B.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numB.Text)], out sys.x_2);
-                    double.TryParse(X.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numX.Text)], out sys.x_3);
-                    double.TryParse(B.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numB.Text)], out sys.r_2);
-                    double.TryParse(X.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numX.Text)], out sys.r_3);
-                    double.TryParse(A.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numA.Text)], out sys.r_1);
-                    this.Close();
+                    try
+                    {
+                        double.TryParse(A.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numA.Text)], out sys.x_1);
+                        double.TryParse(B.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numB.Text)], out sys.x_2);
+                        double.TryParse(X.Properties.Find(_x => _x.First.Second == x.Text).Second[int.Parse(numX.Text)], out sys.x_3);
+                        double.TryParse(B.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numB.Text)], out sys.r_2);
+                        double.TryParse(X.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numX.Text)], out sys.r_3);
+                        double.TryParse(A.Properties.Find(x => x.First.Second == r.Text).Second[int.Parse(numA.Text)], out sys.r_1);
+                        f = true;
+                        this.Close();
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        MessageBox.Show("Свойство по заданным параметрам не найдено!");
+                    }
                 }
             }
         }

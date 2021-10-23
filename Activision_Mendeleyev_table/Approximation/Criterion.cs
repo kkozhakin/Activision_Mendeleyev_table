@@ -29,23 +29,6 @@ namespace Activision_Mendeleyev_table.Approximation
         }
 
         /// <summary>
-        /// Штрафная функция
-        /// </summary>
-        /// <param name="par_lims">допустимая погрешность параметров</param>
-        /// <param name="par_0">начальное значение параметров функции</param>
-        /// <param name="par_new">текущее значение параметров функции</param>
-        /// <returns>значение штрафа</returns>
-        public static double PenaltyF(List<double> par_lims, double[] par_0, double[] par_new)
-        {
-            double sum = 0;
-            for (int i = 0; i < par_lims.Count; i++)
-                if (Math.Abs(par_0[i] - par_new[i]) > par_lims[i] || par_lims[i] == 0)
-                    sum += Math.Abs(par_lims[i] - par_new[i]) * 1000;
-
-            return sum;
-        }
-
-        /// <summary>
         /// Вычисление расстояния между одним набором точек и другим
         /// </summary>
         /// <param name="Dots_1">первый набор точек</param>

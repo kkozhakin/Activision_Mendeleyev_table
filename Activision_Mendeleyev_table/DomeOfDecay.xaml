@@ -54,9 +54,10 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Графики">
-                <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
+                <MenuItem Name="DoD" Header="Купол распда" Click="DoD_Click"/>
                 <MenuItem Name="Hsm" Header="Функция Hsm" Click="Hsm_Click" />
-                <MenuItem Name="Gsm"  Header="Функция Gsm" Click="Gsm_Click" />
+                <MenuItem Name="Gsm" Header="Функция Gsm" Click="Gsm_Click" />
+                <MenuItem Header="Оценка чувствительности" Click="Sensitivity_Click" />
             </MenuItem>
         </Menu>
         <wfi:WindowsFormsHost Name="host" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
@@ -252,7 +253,7 @@
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
-        <Button Name="Build" Grid.Column="0" Grid.Row="2" Content="Построить купол" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="34" RenderTransformOrigin="0.5,0.5" Click="Build_Click" Grid.ColumnSpan="2" Margin="0,8">
+        <Button Name="Approxi" Grid.Column="0" Grid.Row="2" Content="Аппроксимация" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="34" RenderTransformOrigin="0.5,0.5" Click="Approxi_Click" Grid.ColumnSpan="2" Margin="0,8">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

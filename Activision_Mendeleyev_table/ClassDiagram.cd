@@ -35,7 +35,7 @@
   <Class Name="Activision_Mendeleyev_table.DomeOfDecay" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="11.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAhAWAAACAITABGIpJAAQQADQAAABEcGQgQwAAIAgA=</HashCode>
+      <HashCode>BAAhAWAAACAITABGIpJAAQQADQgAAAEcGQiQwAAIAgA=</HashCode>
       <FileName>DomeOfDecay.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -75,7 +75,7 @@
   <Class Name="Activision_Mendeleyev_table.MendeleevTable" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="9.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAIAAIAAAYgAAAAAAAIIAgAAAQAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAACAIAAIAAAYgAIAAAAAIAAgAAAQAAAAA=</HashCode>
       <FileName>MendeleevTable.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -90,7 +90,7 @@
   <Class Name="Activision_Mendeleyev_table.Approximation.Library">
     <Position X="7.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAoAAAgAAAAAgA=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAIEAAgAAAAAgA=</HashCode>
       <FileName>Approximation\Library.cs</FileName>
     </TypeIdentifier>
   </Class>
